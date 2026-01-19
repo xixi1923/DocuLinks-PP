@@ -9,8 +9,12 @@ export default function ThemeToggle() {
   if (!mounted) return null
   const isDark = resolvedTheme === 'dark'
   return (
-    <button aria-label="Toggle dark mode" onClick={()=>setTheme(isDark?'light':'dark')} className="btn btn-outline">
-      {isDark ? '🌙' : '🌞'}
+    <button 
+      aria-label="Toggle dark mode" 
+      onClick={()=>setTheme(isDark?'light':'dark')} 
+      className="p-2 hover:bg-slate-100 dark:hover:bg-slate-800 rounded-lg transition duration-300"
+    >
+      {isDark ? '🌙' : '☀️'}
     </button>
   )
 }

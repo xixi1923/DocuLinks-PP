@@ -287,6 +287,7 @@ export default function Homepage() {
               </div>
             ))}
           </div>
+        </div>
       </section>
 
       {/* Impact Stats Section */}
@@ -386,94 +387,6 @@ export default function Homepage() {
         </div>
       </section>
 
-      {/* Upcoming Events Section */}
-      <section className="py-24 px-6 bg-white">
-        <div className="max-w-6xl mx-auto">
-          <div className="text-center mb-16">
-            <h2 className="text-4xl font-black mb-6 text-slate-900">
-              ព្រឹត្តិការណ៏មកដល់ឆាប់ៗនេះ
-            </h2>
-            <p className="text-xl text-slate-600">
-              ព្រឹត្តិការណ៍ដ៏ពិសេស នឹងត្រូវប្រព្រឹត្តឡើងនៅពេលឆាប់ៗខាងមុខនេះ
-            </p>
-          </div>
-
-          <div className="grid md:grid-cols-2 lg:grid-cols-3 gap-8">
-            {[
-              {
-                title: 'ការសម្អាតឆ្នេរ',
-                description: 'ចូលរួមជាមួយយើងក្នុងការសម្អាតឆ្នេរ',
-                location: 'ខេត្តកោះកុង',
-                time: '៧:៣០ - ១១:៣០ចុះឈ្មោះឥឡូវ',
-                date: '១៦តុលា',
-                category: 'បរិស្ថាន',
-                categoryIcon: Globe
-              },
-              {
-                title: 'ការមើលថែទាំកុមារ',
-                description: 'ចូលរួមជួយមើលថែទាំកុមារ',
-                location: 'ភ្នំពេញ',
-                time: '៨:००ー១២:००ចុះឈ្មោះឥឡូវ',
-                date: '២១តុលា',
-                category: 'អប់រំ',
-                categoryIcon: BookOpen
-              },
-              {
-                title: 'វគ្គសិក្សាបរិស្ថាន',
-                description: 'រៀនអំពីការថែរក្សាបរិស្ថាន',
-                location: 'ខេត្តសៀមរាប',
-                time: '៩:००ー១៦:००ចុះឈ្មោះឥឡូវ',
-                date: '០២វិច្ឆកា',
-                category: 'បរិស្ថាន',
-                categoryIcon: Globe
-              },
-              {
-                title: 'ដាំឈើជាសហគមន៍',
-                description: 'ចូលរួមដាំដើមឈើជាមួយសហគមន៍',
-                location: 'ខេត្តកំពង់ធំ',
-                time: '៦:៣០ - ១០:៣០ចុះឈ្មោះឥឡូវ',
-                date: '០៥តុលា',
-                category: 'បរិស្ថាន',
-                categoryIcon: Globe
-              }
-            ].map((event, index) => (
-              <div key={index} className="bg-white border border-gray-200 p-6 rounded-xl shadow-lg hover:shadow-xl transition-shadow duration-300">
-                <div className="flex items-center justify-between mb-4">
-                  <span className="px-3 py-1 bg-indigo-100 text-indigo-800 text-sm font-medium rounded-full">
-                    {event.category}
-                  </span>
-                  <event.categoryIcon size={20} className="text-indigo-600" />
-                </div>
-                <h3 className="text-xl font-bold mb-3 text-slate-900">{event.title}</h3>
-                <p className="text-slate-600 mb-4">{event.description}</p>
-                <div className="space-y-2 text-sm text-slate-600 mb-6">
-                  <div className="flex items-center gap-2">
-                    <MapPin size={16} />
-                    {event.location}
-                  </div>
-                  <div className="flex items-center gap-2">
-                    <Clock size={16} />
-                    {event.time}
-                  </div>
-                </div>
-                <div className="flex items-center justify-between">
-                  <span className="text-2xl font-bold text-indigo-600">{event.date}</span>
-                  <button className="bg-indigo-600 text-white px-4 py-2 rounded-lg font-medium hover:bg-indigo-700 transition-colors duration-300">
-                    ចុះឈ្មោះ
-                  </button>
-                </div>
-              </div>
-            ))}
-          </div>
-
-          <div className="text-center mt-12">
-            <p className="text-slate-600 mb-6">
-              ផ្តល់បទពិសោធន៍ថ្មីៗ និងឱកាសក្នុងការបង្កើតទំនាក់ទំនងថ្មីៗ
-            </p>
-          </div>
-        </div>
-      </section>
-
       {/* Testimonials Section */}
       <section className="py-24 px-6 bg-gray-50">
         <div className="max-w-6xl mx-auto">
@@ -490,31 +403,31 @@ export default function Homepage() {
           <div className="grid md:grid-cols-2 lg:grid-cols-3 gap-8">
             {[
               {
-                name: 'លី គឹមស៊ុន',
+                name: 'សុខ សុភា',
                 role: 'និស្សិតវិទ្យាសាស្ត្រកុំព្យូទ័រ',
                 text: 'DocuLink ជួយខ្ញុំយ៉ាងខ្លាំងក្នុងការស្វែងរកសម្ភារៈសិក្សា។ ខ្ញុំអាចចែករំលែកកិច្ចការដ្ឋានរបស់ខ្ញុំ និងទទួលបានធនធានាដ៏មានតម្លៃពីនិស្សិតផ្សេងទៀត។',
                 image: 'https://images.unsplash.com/photo-1507003211169-0a1dd7228f2d?w=150&h=150&fit=crop&crop=face'
               },
               {
-                name: 'ចន្ទ មុនី',
+                name: 'លី វិច្ឆិកា',
                 role: 'និស្សិតវិទ្យាសាស្ត្រធុរកិច្ច',
                 text: 'វេទិកានេះធ្វើឱ្យការសិក្សារបស់ខ្ញុំកាន់តែងាយស្រួល។ ខ្ញុំអាចស្វែងរកគំរូរបាយការណ៍ និងឯកសារសិក្សាដោយឥតគិតថ្លៃ។ វាជាកន្លែងដ៏ល្អសម្រាប់និស្សិត។',
                 image: 'https://images.unsplash.com/photo-1494790108755-2616b612b786?w=150&h=150&fit=crop&crop=face'
               },
               {
-                name: 'ចាន់ ចំរើន',
+                name: 'ជា សុវណ្ណរ៉ា',
                 role: 'និស្សិតវិទ្យាសាស្ត្របរិស្ថាន',
                 text: 'ខ្ញុំបានរកឃើញសម្ភារៈសិក្សាជាច្រើនដែលពាក់ព័ន្ធនឹងជំនាញរបស់ខ្ញុំ។ ការចែករំលែកចំណេះដឹងនេះធ្វើឱ្យសហគមន៍និស្សិតកាន់តែរឹងមាំ។',
                 image: 'https://images.unsplash.com/photo-1438761681033-6461ffad8d80?w=150&h=150&fit=crop&crop=face'
               },
               {
-                name: 'កែវ សុជាតា',
+                name: 'ណូ វិជ្ជា',
                 role: 'និស្សិតវិទ្យាសាស្ត្រសង្គម',
                 text: 'DocuLink ជាវេទិកាដ៏ល្អសម្រាប់និស្សិតដែលចង់ចែករំលែកចំណេះដឹង។ ខ្ញុំបានជួបប្រទះនិស្សិតជាច្រើនដែលមានចំណាប់អារម្មណ៍ដូចគ្នា។',
                 image: 'https://images.unsplash.com/photo-1472099645785-5658abf4ff4e?w=150&h=150&fit=crop&crop=face'
               },
               {
-                name: 'ផល សុភា',
+                name: 'ហុង សុភាព',
                 role: 'អ្នកស្ម័គ្រចិត្តបរិច្ចាគ',
                 text: 'ការចូលរួមជាស្ម័គ្រចិត្តក្នុងវិស័យអប់រំនេះ បានផ្តល់ឱកាសដ៏អស្ចារ្យមួយឱ្យខ្ញុំ។',
                 image: 'https://images.unsplash.com/photo-1534528741775-53994a69daeb?w=150&h=150&fit=crop&crop=face'
@@ -543,13 +456,13 @@ export default function Homepage() {
       </section>
 
       {/* FAQ Section */}
-      <section className="py-24 px-6 bg-white animate-fade-in-up">
+      <section className="py-24 px-6 bg-white">
         <div className="max-w-4xl mx-auto">
           <div className="text-center mb-16">
-            <h2 className="text-4xl font-black mb-6 text-slate-900 animate-bounce">
+            <h2 className="text-4xl font-bold mb-6 text-slate-900">
               សំណួរញឹកញាប់ (FAQ)
             </h2>
-            <p className="text-xl text-slate-600 animate-pulse">
+            <p className="text-lg text-slate-600">
               ស្វែងរកចម្លើយសម្រាប់សំណួរដែលអ្នកប្រើប្រាស់តែងតែសួរ
             </p>
           </div>
@@ -577,21 +490,21 @@ export default function Homepage() {
                 a: 'បច្ចុប្បន្នយើងមិនមានកំណត់ចំនួនឯកសារទេ។ អ្នកអាចផ្ទុកឯកសារចំនួនប៉ុន្មានក៏បានដែលចង់បាន។'
               }
             ].map((faq, index) => (
-              <div key={index} className="bg-white border border-gray-200 rounded-lg shadow-sm hover:shadow-lg transition-all duration-500 hover:scale-102 animate-fade-in-up border-l-4 border-l-indigo-500" style={{animationDelay: `${index * 0.1}s`}}>
+              <div key={index} className="bg-white border border-gray-200 rounded-lg shadow-sm hover:shadow-md transition duration-300 border-l-4 border-l-indigo-500">
                 <div className="p-6">
-                  <h3 className="text-lg font-bold mb-3 text-slate-900 flex items-center gap-3 animate-pulse">
-                    <span className="text-indigo-600 animate-bounce"></span>
+                  <h3 className="text-lg font-semibold mb-3 text-slate-900 flex items-center gap-3">
+                    <span className="text-indigo-600 text-2xl">•</span>
                     {faq.q}
                   </h3>
-                  <p className="text-slate-600 leading-relaxed animate-fade-in-up" style={{animationDelay: `${index * 0.1 + 0.1}s`}}>{faq.a}</p>
+                  <p className="text-slate-600 leading-relaxed">{faq.a}</p>
                 </div>
               </div>
             ))}
           </div>
 
-          <div className="text-center mt-12 animate-fade-in-up" style={{animationDelay: '0.6s'}}>
-            <p className="text-slate-600 mb-6">មានសំណួរទៀតទេ? <a href="#" className="text-indigo-600 hover:text-indigo-700 font-medium animate-pulse">ទាក់ទងយើងខ្ញុំ</a></p>
-            <button className="bg-indigo-600 text-white px-8 py-4 rounded-lg font-bold hover:bg-indigo-700 transition-all duration-300 hover:scale-110 animate-bounce">
+          <div className="text-center mt-12">
+            <p className="text-slate-600 mb-6">មានសំណួរទៀតទេ? <a href="#" className="text-indigo-600 hover:text-indigo-700 font-semibold transition duration-300">ទាក់ទងយើងខ្ញុំ</a></p>
+            <button className="bg-indigo-600 text-white px-8 py-4 rounded-lg font-bold hover:bg-indigo-700 transition duration-300">
               ចាប់ផ្តើមថ្ងៃនេះ
             </button>
           </div>
@@ -599,45 +512,60 @@ export default function Homepage() {
       </section>
 
       {/* CTA Section */}
-      <section className="py-24 px-6 bg-indigo-600 text-white animate-fade-in-up">
+      <section className="py-24 px-6 bg-gradient-to-r from-indigo-600 to-indigo-700 text-white">
         <div className="max-w-4xl mx-auto text-center">
-          <h2 className="text-4xl font-black mb-6 animate-bounce">
-            ក្លាយជាស្ម័គ្រចិត្តថ្ងៃនេះ!
+          <h2 className="text-4xl font-bold mb-6">
+            ចូលរួមចែករំលែកឯកសារថ្ងៃនេះ
           </h2>
-          <p className="text-xl mb-8 opacity-90 animate-pulse">
-            កម្ពុជាកំពុងត្រូវការមនុស្សមានចិត្តស្ម័គ្របដូចអ្នក។
-            ចូលរួមជាមួយយើងក្នុងការអភិវឌ្ឍសហគមន៍ និងផ្លាស់ប្តូរជីវិត។
+          <p className="text-lg mb-12 opacity-95 leading-relaxed">
+            សូមរស់នៅក្នុង DocuLink ដែលមាន​សហគមន៍ពិតប្រាកដរបស់និស្សិត
+            ដែលគ្រាន់តែសង្ឃឹមថាផ្លាស់ប្តូរឯកសាររបស់ពួកគេតាមរយៈការចែករំលែក។ 
+            ឈានទៅលើផ្ទះលម្អិតនៃការរៀនសូត្ របស់ពួកគេ។
           </p>
 
-          <div className="flex flex-col sm:flex-row gap-6 justify-center mb-12">
-            <div className="flex items-center gap-4 text-sm animate-fade-in-up" style={{animationDelay: '0.2s'}}>
-              <CheckCircle size={20} className="text-green-400 animate-ping" />
-              <span>ចុះឈ្មោះឥតគិតថ្លៃ</span>
+          <div className="flex flex-col sm:flex-row gap-8 justify-center mb-12 text-left">
+            <div className="flex items-start gap-4 flex-1">
+              <div className="flex-shrink-0">
+                <CheckCircle size={24} className="text-green-300 mt-1" />
+              </div>
+              <div>
+                <h4 className="font-semibold mb-2">ផ្ទុកឯកសារដោយឥតគិតថ្លៃ</h4>
+                <p className="text-sm opacity-90">ផ្ទុកឯកសារប្រភេទផ្សេងៗដោយមិនមានបញ្ហា</p>
+              </div>
             </div>
-            <div className="flex items-center gap-4 text-sm animate-fade-in-up" style={{animationDelay: '0.4s'}}>
-              <CheckCircle size={20} className="text-green-400 animate-ping" />
-              <span>ជ្រើសរើសកម្មវិធីដែលអ្នកចូលចិត្ត</span>
+            <div className="flex items-start gap-4 flex-1">
+              <div className="flex-shrink-0">
+                <CheckCircle size={24} className="text-green-300 mt-1" />
+              </div>
+              <div>
+                <h4 className="font-semibold mb-2">ស្វែងរកឯកសារងាយស្រួល</h4>
+                <p className="text-sm opacity-90">រកឃើញឯកសារដែលអ្នកស្វាគមន៍</p>
+              </div>
             </div>
-            <div className="flex items-center gap-4 text-sm animate-fade-in-up" style={{animationDelay: '0.6s'}}>
-              <CheckCircle size={20} className="text-green-400 animate-ping" />
-              <span>ទទួលបានវិញ្ញាបនប័ត្រ</span>
+            <div className="flex items-start gap-4 flex-1">
+              <div className="flex-shrink-0">
+                <CheckCircle size={24} className="text-green-300 mt-1" />
+              </div>
+              <div>
+                <h4 className="font-semibold mb-2">សហគមន៍ដ៏រឹងមាំ</h4>
+                <p className="text-sm opacity-90">ភ្ជាប់ជាមួយនិស្សិតដែលមានគំនិតដូចគ្នា</p>
+              </div>
             </div>
           </div>
 
-          <div className="flex flex-col sm:flex-row gap-6 justify-center animate-fade-in-up" style={{animationDelay: '0.8s'}}>
-            <button className="bg-white text-indigo-600 px-12 py-4 rounded-lg font-bold hover:bg-gray-100 transition-all duration-300 hover:scale-110 hover:rotate-1 flex items-center gap-2 animate-pulse">
-              <UserPlus size={20} className="animate-bounce" />
-              ចុះឈ្មោះឥឡូវនេះ
+          <div className="flex flex-col sm:flex-row gap-4 justify-center">
+            <button className="bg-white text-indigo-600 px-10 py-3 rounded-lg font-bold hover:bg-gray-50 transition duration-300 flex items-center justify-center gap-2">
+              <Upload size={20} />
+              ផ្ទុកឯកសារឡើង
+            </button>
+            <button className="border-2 border-white text-white px-10 py-3 rounded-lg font-bold hover:bg-white/10 transition duration-300 flex items-center justify-center gap-2">
+              <Users size={20} />
+              ចូលរួមសហគមន៍
             </button>
           </div>
 
-          <div className="mt-12 text-center animate-fade-in-up" style={{animationDelay: '1s'}}>
-            <p className="text-indigo-200 mb-4 animate-pulse">អ្នកស្ម័គ្រចិត្តជាង 650+ នាក់</p>
-            <div className="flex justify-center gap-1">
-              {[...Array(5)].map((_, i) => (
-                <Star key={i} size={20} className="text-yellow-400 fill-current animate-pulse" />
-              ))}
-            </div>
+          <div className="mt-12 text-center">
+            <p className="text-sm opacity-90">សកម្ម 10,000+ ឯកសារ | និស្សិត 5,000+ នាក់</p>
           </div>
         </div>
       </section>
@@ -648,11 +576,10 @@ export default function Homepage() {
           <div className="grid md:grid-cols-4 gap-12 mb-12">
             <div>
               <h3 className="text-2xl font-black mb-6">
-                ស្ម័គ្រចិត្ត
+                អំពី DocuLink
               </h3>
               <p className="text-slate-400 mb-6 leading-relaxed">
-                បេសកកម្មរបស់យើងគឺភ្ជាប់ស្មារតីអាណិតអាសូរជាមួយនឹងឱកាសស្ម័គ្រចិត្ត
-                ដើម្បីកសាងសហគមន៍កាន់តែរឹងមាំ និងមានការចូលរួម។
+                បេសកកម្មរបស់យើងគឺការមានស្មារតីចែករំលែកឯកសារជំនួយដល់និស្សិតទាំងអស់ក្នុងការសិក្សារស្រាវជ្រាវ។
               </p>
               <div className="flex gap-4">
                 <button className="p-3 bg-slate-800 rounded-lg hover:bg-slate-700 transition-colors duration-300 hover:scale-110">
@@ -674,11 +601,10 @@ export default function Homepage() {
               <h4 className="font-bold mb-6 text-lg">តំណរភ្ជាប់រហ័ស</h4>
               <ul className="space-y-3 text-slate-400">
                 <li><a href="#" className="hover:text-white transition-colors duration-300">ទំព័រដើម</a></li>
-                <li><a href="#" className="hover:text-white transition-colors duration-300">ការងារស្ម័គ្រចិត្ត</a></li>
+                <li><a href="#" className="hover:text-white transition-colors duration-300">រុករកឯកសារ</a></li>
                 <li><a href="#" className="hover:text-white transition-colors duration-300">សហគមន៍</a></li>
                 <li><a href="#" className="hover:text-white transition-colors duration-300">ព្រឹត្តិការណ៏</a></li>
                 <li><a href="#" className="hover:text-white transition-colors duration-300">អត្ថបទ</a></li>
-                <li><a href="#" className="hover:text-white transition-colors duration-300">បរិច្ចាក</a></li>
               </ul>
             </div>
 
@@ -706,14 +632,14 @@ export default function Homepage() {
                 </p>
                 <p className="flex items-center gap-3">
                   <Mail size={16} />
-                  info@volunteer.org
+                  doculink@gmail.com
                 </p>
               </div>
             </div>
           </div>
 
           <div className="border-t border-slate-800 pt-8 text-center text-slate-400">
-            <p className="text-lg">© 2026 ស្ម័គ្រចិត្ត។ រក្សាសិទ្ធិគ្រប់យ៉ាង។</p>
+            <p className="text-lg">© 2026 Doculink។ រក្សាសិទ្ធិគ្រប់យ៉ាង។</p>
           </div>
         </div>
       </footer>
