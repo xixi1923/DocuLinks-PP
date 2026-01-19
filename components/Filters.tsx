@@ -1,18 +1,20 @@
 
 'use client'
-import { useRouter, useSearchParams } from 'next/navigation'
+import { usePathname, useRouter, useSearchParams } from 'next/navigation'
 
 export type Cat = { id: number, name: string, slug: string }
 
-export default function Filters({ categories }: { categories: Cat[] }) {
+export default function Filters({ categories, basePath }: { categories: Cat[], basePath?: string }) {
   const router = useRouter()
+  const pathname = usePathname()
   const params = useSearchParams()
   const current = params.get('cat') ?? 'all'
 
   const setCat = (c: string) => {
     const qs = new URLSearchParams(params.toString())
     if (c === 'all') qs.delete('cat'); else qs.set('cat', c)
-    router.push('/?'+qs.toString())
+    const target = basePath ?? pathname ?? '/'
+    router.push(target + '?' + qs.toString())
   }
 
   return (
