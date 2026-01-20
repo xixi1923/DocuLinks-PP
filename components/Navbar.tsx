@@ -14,9 +14,11 @@ import { User, LogOut, Settings } from 'lucide-react'
 export default function Navbar() {
   const pathname = usePathname()
   const [user, setUser] = useState<any>(null)
+  const [isHydrated, setIsHydrated] = useState(false)
   const { t } = useLanguage()
 
   useEffect(() => {
+    setIsHydrated(true)
     const unsubscribe = onAuthStateChanged(auth, (currentUser) => {
       setUser(currentUser)
     })
@@ -42,17 +44,17 @@ export default function Navbar() {
           {link('/upload', 'upload')}
           {link('/about', 'aboutUs')}
           {link('/contact', 'contactUs')}
-          {user && (<AdminLink />)}
+          {isHydrated && user && (<AdminLink />)}
         </nav>
         <div className="flex items-center gap-3">
-          <LanguageSwitcher />
+          {isHydrated && <LanguageSwitcher />}
           {!user ? (
             <>
               <Link href="/auth/login" className="px-4 py-2 text-slate-700 dark:text-slate-300 font-semibold hover:text-indigo-600 dark:hover:text-indigo-400 transition duration-200">{t('login')}</Link>
               <Link href="/auth/signup" className="px-5 py-2 bg-gradient-to-r from-indigo-600 to-purple-600 text-white font-semibold rounded-lg hover:shadow-lg hover:scale-105 transition duration-300">{t('signup')}</Link>
             </>
           ) : (
-            <ProfileMenu user={user} />
+            isHydrated && <ProfileMenu user={user} />
           )}
         </div>
       </div>
@@ -62,11 +64,17 @@ export default function Navbar() {
 
 function ProfileMenu({ user }: { user: any }) {
   const [open, setOpen] = useState(false)
+  const [isHydrated, setIsHydrated] = useState(false)
   const dropdownRef = useRef<HTMLDivElement>(null)
   const pathname = usePathname()
   const { t } = useLanguage()
 
   useEffect(() => {
+    setIsHydrated(true)
+  }, [])
+
+  useEffect(() => {
+    if (!isHydrated) return
     const handleClickOutside = (event: MouseEvent) => {
       if (dropdownRef.current && !dropdownRef.current.contains(event.target as Node)) {
         setOpen(false)
@@ -74,7 +82,7 @@ function ProfileMenu({ user }: { user: any }) {
     }
     document.addEventListener('mousedown', handleClickOutside)
     return () => document.removeEventListener('mousedown', handleClickOutside)
-  }, [])
+  }, [isHydrated])
 
   const handleSignOut = async () => {
     await signOut(auth)
@@ -106,7 +114,7 @@ function ProfileMenu({ user }: { user: any }) {
       </button>
 
       {/* Dropdown Menu */}
-      {open && (
+      {isHydrated && open && (
         <div className="absolute right-0 mt-3 w-72 bg-white dark:bg-slate-900 rounded-2xl shadow-2xl border border-slate-200 dark:border-slate-700 overflow-hidden animate-in fade-in zoom-in-95 duration-200">
           {/* User Info */}
           <div className="px-5 py-5 bg-gradient-to-r from-indigo-50 to-purple-50 dark:from-indigo-950/30 dark:to-purple-950/30 border-b border-slate-200 dark:border-slate-700">

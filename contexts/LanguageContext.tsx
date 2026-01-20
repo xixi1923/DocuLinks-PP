@@ -219,8 +219,13 @@ const translations: Record<Language, Record<string, string>> = {
 
 export function LanguageProvider({ children }: { children: React.ReactNode }) {
   const [language, setLanguageState] = useState<Language>('km')
+  const [isHydrated, setIsHydrated] = useState(false)
 
   useEffect(() => {
+    // Only run on client side
+    if (typeof window === 'undefined') return
+
+    setIsHydrated(true)
     const savedLanguage = localStorage.getItem('language') as Language | null
     if (savedLanguage && (savedLanguage === 'en' || savedLanguage === 'km')) {
       setLanguageState(savedLanguage)
@@ -233,11 +238,22 @@ export function LanguageProvider({ children }: { children: React.ReactNode }) {
 
   const setLanguage = (lang: Language) => {
     setLanguageState(lang)
-    localStorage.setItem('language', lang)
+    if (typeof window !== 'undefined') {
+      localStorage.setItem('language', lang)
+    }
   }
 
   const t = (key: string): string => {
     return translations[language][key] || key
+  }
+
+  // Prevent hydration mismatch by not rendering until hydrated
+  if (!isHydrated) {
+    return (
+      <LanguageContext.Provider value={{ language: 'km', setLanguage, t }}>
+        {children}
+      </LanguageContext.Provider>
+    )
   }
 
   return (

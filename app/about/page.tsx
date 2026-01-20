@@ -3,7 +3,7 @@
 import Link from 'next/link'
 import { useState } from 'react'
 import { useLanguage } from '@/contexts/LanguageContext'
-import { useTheme } from '@/contexts/ThemeContext'
+import { useTheme } from 'next-themes'
 import { BookOpen, Users, Target, Lightbulb, CheckCircle2, LayoutDashboard, Handshake, Facebook, Mail, ChevronLeft, ChevronRight, Send, Twitter, Linkedin, Instagram, MapPin, Phone } from 'lucide-react'
 import { motion, AnimatePresence } from 'framer-motion'
 
@@ -20,35 +20,35 @@ export default function AboutPage() {
   const { theme } = useTheme()
   const [teamSlide, setTeamSlide] = useState(0)
 
-  // Timeline Data from Images
+  // Timeline Data from Images (updated for professionalism)
   const timeline = [
     {
       year: '2020',
-      title: language === 'km' ? 'ឆ្នាំបង្កើត (Foundation Year)' : 'Foundation Year',
+      title: language === 'km' ? 'ការបង្កើតគំនិត' : 'Foundation Year',
       points: language === 'km' 
-        ? ['ចាប់ផ្តើមគំនិតបង្កើតគម្រោងដោយក្រុមយុវជនតូចៗ', 'គោលបំណងដំបូង៖ ជួយសហគមន៍ក្នុងវិស័យអប់រំ និងបរិស្ថាន', 'រៀបចំការជួបជុំដំបូងជាមួយសហគមន៍ក្នុងតំបន់']
-        : ['Concept started by a small youth group', 'Initial Goal: Help education and environment', 'First community meeting organized']
+        ? ['ចាប់ផ្តើមគំនិតដោយក្រុមយុវជនតូចៗ', 'គោលបំណងដំបូង៖ ជួយសហគមន៍ក្នុងវិស័យអប់រំ និងបរិស្ថាន', 'រៀបចំការជួបជុំដំបូងជាមួយសហគមន៍ក្នុងតំបន់']
+        : ['Concept initiated by a small youth group', 'Initial focus: Supporting education and environmental communities', 'Organized first community meetings locally']
     },
     {
       year: '2021',
-      title: language === 'km' ? 'ការចាប់ផ្តើមសកម្មភាព' : 'Starting Activities',
+      title: language === 'km' ? 'ការចាប់ផ្តើមសកម្មភាព' : 'Launching Activities',
       points: language === 'km'
-        ? ['រៀបចំសកម្មភាពសម្អាតតំបន់សាធារណៈដំបូង', 'ចូលរួមជាមួយកុមារ និងមាតាបិតាក្នុងការបង្រៀនអក្សរខ្មែរ និងគណិតវិទ្យា', 'ទទួលបានការគាំទ្រពីអាជ្ញាធរ និងស្ថាប័នមូលដ្ឋាន']
-        : ['First public cleaning activity', 'Teaching Khmer and Math to children', 'Received support from local authorities']
+        ? ['រៀបចំសកម្មភាពសម្អាតតំបន់សាធារណៈដំបូង', 'ចូលរួមបង្រៀនអក្សរខ្មែរ និងគណិតវិទ្យាដល់កុមារ', 'ទទួលបានការគាំទ្រពីអាជ្ញាធរ និងស្ថាប័នមូលដ្ឋាន']
+        : ['Launched first public area cleaning activities', 'Participated in teaching Khmer and mathematics to children', 'Received support from local authorities and institutions']
     },
     {
       year: '2024',
       title: language === 'km' ? 'ការទទួលស្គាល់' : 'Recognition',
       points: language === 'km'
-        ? ['ទទួលបានពានរង្វាន់សកម្មភាពសង្គមឆ្នើមថ្នាក់ជាតិ', 'ការចូលរួមស្ម័គ្រចិត្តកើនដល់ 400 នាក់', 'ទទួលបានការគាំទ្រពីអាជ្ញាធរ និងស្ថាប័នមូលដ្ឋាន']
-        : ['National Social Action Award', 'Volunteer count reached 400', 'Institutional support increased']
+        ? ['ទទួលបានពានរង្វាន់សកម្មភាពសង្គមឆ្នើមជាតិ', 'ចំនួនស្ម័គ្រចិត្តកើនដល់ 400 នាក់', 'ការគាំទ្រពីស្ថាប័នបានកើនឡើង']
+        : ['Awarded national social action excellence prize', 'Volunteer count reached 400', 'Increased institutional support']
     },
     {
       year: '2025',
-      title: language === 'km' ? 'ការសម្រេចជោគជ័យធំ' : 'Major Success',
+      title: language === 'km' ? 'សម្រេចជោគជ័យធំ' : 'Major Achievements',
       points: language === 'km'
-        ? ['ចំនួនស្ម័គ្រចិត្តកើនដល់ 3,000 នាក់', 'បង្កើតគម្រោងថ្មីសម្រាប់ការការពារបរិស្ថាន', 'មានដៃគូសហការជាច្រើនបានទាក់ទងមកយើង']
-        : ['Volunteers reached 3,000', 'New environmental protection projects', 'Increased global partnerships']
+        ? ['ចំនួនស្ម័គ្រចិត្តកើនដល់ 3,000 នាក់', 'បង្កើតគម្រោងថ្មីសម្រាប់ការការពារបរិស្ថាន', 'មានដៃគូសហការជាច្រើនបានទាក់ទងមក']
+        : ['Volunteers expanded to 3,000', 'Launched new environmental protection initiatives', 'Attracted multiple global partnerships']
     }
   ]
 
@@ -59,8 +59,8 @@ export default function AboutPage() {
       khName: 'ធឿន អេងយី',
       role: 'Team Leader',
       khRole: 'ប្រធានក្រុម',
-      image: '/images/engyi.jpg',
-      description: 'ខ្ញុំជានិស្សិតមកពីសាកលវិទ្យាល័យភូមិន្ទភ្នំពេញ (RUPP) ឆ្នាំទី ៣ ផ្នែកវិទ្យាសាស្ត្រកុំព្យូទ័រ',
+      image: '/images/engyi.jpg', // Placeholder; replace with professional headshot
+      description: 'ខ្ញុំជានិស្សិតមកពីសាកលវិទ្យាល័យភូមិន្ទភ្នំពេញ (RUPP) ឆ្នាំទី ៣ ផ្នែកវិទ្យាសាស្ត្រកុំព្យូទ័រ។',
       social: { facebook: '#', telegram: '#', email: 'engyi@example.com' }
     },
     {
@@ -69,14 +69,14 @@ export default function AboutPage() {
       khName: ' ប៉ា​ បូរ៉ាស៊ី',
       role: 'Member',
       khRole: 'សមាជិក',
-      image: '/images/rasy.jpg',
-      description: 'ខ្ញុំជានិស្សិតមកពីសាកលវិទ្យាល័យភូមិន្ទភ្នំពេញ (RUPP) ឆ្នាំទី ៣ ផ្នែកវិទ្យាសាស្ត្រកុំព្យូទ័រ',
+      image: '/images/rasy.jpg', // Placeholder; replace with professional headshot
+      description: 'ខ្ញុំជានិស្សិតមកពីសាកលវិទ្យាល័យភូមិន្ទភ្នំពេញ (RUPP) ឆ្នាំទី ៣ ផ្នែកវិទ្យាសាស្ត្រកុំព្យូទ័រ។',
       social: { facebook: '#', telegram: '#', email: 'paborasy@example.com' }
     }
   ]
 
   return (
-    <main className={`overflow-x-hidden transition-colors duration-300 ${theme === 'dark' ? 'bg-slate-950 text-white' : 'bg-[#F8FAFC] text-slate-900'}`}>
+    <main className={`overflow-x-hidden transition-colors duration-300 ${theme === 'dark' ? 'bg-slate-950 text-white' : 'bg-gradient-to-br from-blue-50 via-white to-indigo-50 text-slate-900'}`}>
       
       {/* --- HERO SECTION (Vision/Mission/Goal) --- */}
       <section className={`py-20 px-6 max-w-7xl mx-auto ${theme === 'dark' ? 'bg-slate-950' : ''}`}>
@@ -85,13 +85,13 @@ export default function AboutPage() {
           <p className={`text-lg max-w-3xl mx-auto transition-colors duration-300 ${theme === 'dark' ? 'text-slate-400' : 'text-slate-600'}`}>
             {language === 'km' 
               ? 'យើងជឿជាក់ថា សង្គមអាចក្លាយជាកន្លែងប្រសើរជាងមុន ប្រសិនបើយុវជន និងសហគមន៍ទទួលបានឱកាសអប់រំ និងការគាំទ្រសមស្រប។'
-              : 'We believe society becomes better when youth and communities receive proper education and support.'}
+              : 'We believe society can become a better place when youth and communities receive appropriate education and support.'}
           </p>
         </motion.div>
 
         <div className="grid md:grid-cols-3 gap-8">
           {/* Vision Card */}
-          <motion.div {...fadeInUp} className={`p-10 rounded-[32px] shadow-sm border transition-colors duration-300 text-center ${theme === 'dark' ? 'bg-slate-800 border-slate-700' : 'bg-white border-slate-100'}`}>
+          <motion.div {...fadeInUp} className={`p-10 rounded-[32px] shadow-lg border transition-all duration-300 hover:shadow-xl text-center ${theme === 'dark' ? 'bg-slate-800 border-slate-700' : 'bg-white border-slate-200'}`}>
             <div className={`w-16 h-16 rounded-2xl flex items-center justify-center mx-auto mb-6 transition-colors duration-300 ${theme === 'dark' ? 'bg-blue-900/30' : 'bg-blue-50'}`}>
               <Lightbulb className={`transition-colors duration-300 ${theme === 'dark' ? 'text-blue-400' : 'text-blue-500'}`} size={32} />
             </div>
@@ -99,12 +99,12 @@ export default function AboutPage() {
             <p className={`leading-relaxed transition-colors duration-300 ${theme === 'dark' ? 'text-slate-400' : 'text-slate-500'}`}>
               {language === 'km' 
                 ? 'ចង់ឃើញសង្គមដែលមានមនុស្សគ្រប់រូបមានឱកាសស្មើគ្នា ទទួលបានការអប់រំ និងជីវភាពប្រសើរ ទាំងជនបទនិងទីប្រជុំជន។'
-                : 'To see a society where everyone has equal opportunity for education and better living.'}
+                : 'To envision a society where everyone has equal opportunities for education and improved living standards, both in rural and urban areas.'}
             </p>
           </motion.div>
 
           {/* Mission Card */}
-          <motion.div {...fadeInUp} transition={{ delay: 0.1 }} className={`p-10 rounded-[32px] shadow-sm border transition-colors duration-300 text-center ${theme === 'dark' ? 'bg-slate-800 border-slate-700' : 'bg-white border-slate-100'}`}>
+          <motion.div {...fadeInUp} transition={{ delay: 0.1 }} className={`p-10 rounded-[32px] shadow-lg border transition-all duration-300 hover:shadow-xl text-center ${theme === 'dark' ? 'bg-slate-800 border-slate-700' : 'bg-white border-slate-200'}`}>
             <div className={`w-16 h-16 rounded-2xl flex items-center justify-center mx-auto mb-6 transition-colors duration-300 ${theme === 'dark' ? 'bg-green-900/30' : 'bg-green-50'}`}>
               <Users className={`transition-colors duration-300 ${theme === 'dark' ? 'text-green-400' : 'text-green-500'}`} size={32} />
             </div>
@@ -112,20 +112,20 @@ export default function AboutPage() {
             <p className={`leading-relaxed transition-colors duration-300 ${theme === 'dark' ? 'text-slate-400' : 'text-slate-500'}`}>
               {language === 'km'
                 ? 'ផ្តល់ឱកាសអប់រំ ការបណ្តុះបណ្តាល ដើម្បីបង្កើតកម្លាំងយុវជន និងសហគមន៍ ក្លាយជាអ្នកដឹកនាំ និងផ្លាស់ប្តូរសង្គមឲ្យកាន់តែប្រសើរ។'
-                : 'Providing education and training to empower youth to become leaders and social changemakers.'}
+                : 'To provide education and training opportunities to empower youth and communities to become leaders and agents of positive social change.'}
             </p>
           </motion.div>
 
           {/* Goal Card */}
-          <motion.div {...fadeInUp} transition={{ delay: 0.2 }} className={`p-10 rounded-[32px] shadow-sm border transition-colors duration-300 text-center ${theme === 'dark' ? 'bg-slate-800 border-slate-700' : 'bg-white border-slate-100'}`}>
+          <motion.div {...fadeInUp} transition={{ delay: 0.2 }} className={`p-10 rounded-[32px] shadow-lg border transition-all duration-300 hover:shadow-xl text-center ${theme === 'dark' ? 'bg-slate-800 border-slate-700' : 'bg-white border-slate-200'}`}>
             <div className={`w-16 h-16 rounded-2xl flex items-center justify-center mx-auto mb-6 transition-colors duration-300 ${theme === 'dark' ? 'bg-red-900/30' : 'bg-red-50'}`}>
               <Target className={`transition-colors duration-300 ${theme === 'dark' ? 'text-red-400' : 'text-red-500'}`} size={32} />
             </div>
-            <h3 className={`text-2xl font-bold mb-4 transition-colors duration-300 ${theme === 'dark' ? 'text-red-400' : 'text-red-600'}`}>{language === 'km' ? 'គោលដៅ' : 'Goal'}</h3>
+            <h3 className={`text-2xl font-bold mb-4 transition-colors duration-300 ${theme === 'dark' ? 'text-red-400' : 'text-red-600'}`}>{language === 'km' ? 'គោលដៅ' : 'Goals'}</h3>
             <p className={`leading-relaxed transition-colors duration-300 ${theme === 'dark' ? 'text-slate-400' : 'text-slate-500'}`}>
               {language === 'km'
                 ? 'ជំរុញការចូលរួមសហគមន៍ អភិវឌ្ឍសេដ្ឋកិច្ច និងបរិស្ថាន ព្រមទាំងគាំទ្រដល់អ្នកដែលត្រូវការជំនួយទាំងឡាយគ្រប់ខេត្តក្រុង។'
-                : 'Promote community engagement, economic development, and environment across all provinces.'}
+                : 'To promote community engagement, economic development, and environmental sustainability while supporting those in need across all provinces.'}
             </p>
           </motion.div>
         </div>
@@ -134,7 +134,7 @@ export default function AboutPage() {
       {/* --- TIMELINE SECTION --- */}
       <section className={`py-24 transition-colors duration-300 ${theme === 'dark' ? 'bg-slate-900' : 'bg-white'}`}>
         <div className="max-w-7xl mx-auto px-6">
-          <h2 className={`text-3xl font-bold text-center mb-20 transition-colors duration-300 ${theme === 'dark' ? 'text-white' : 'text-slate-900'}`}>{language === 'km' ? 'បស់ស្រីដបេមហែភភាសក្រចមខ្ខ' : 'Our Foundation Journey'}</h2>
+          <h2 className={`text-3xl font-bold text-center mb-20 transition-colors duration-300 ${theme === 'dark' ? 'text-white' : 'text-slate-900'}`}>{language === 'km' ? 'ប្រវត្តិសង្ខេបរបស់យើង' : 'Our Journey'}</h2>
           
           <div className="relative">
             {/* Vertical Line */}
@@ -146,13 +146,13 @@ export default function AboutPage() {
                   {/* Content Card */}
                   <motion.div 
                     {...fadeInUp}
-                    className={`flex-1 p-8 rounded-3xl shadow-lg border relative group hover:shadow-xl transition-all ${theme === 'dark' ? 'bg-slate-800 border-slate-700' : 'bg-white border-slate-50'}`}
+                    className={`flex-1 p-8 rounded-3xl shadow-lg border relative group hover:shadow-xl transition-all ${theme === 'dark' ? 'bg-slate-800 border-slate-700' : 'bg-white border-slate-200'}`}
                   >
                     <h3 className={`text-xl font-bold mb-4 transition-colors duration-300 ${theme === 'dark' ? 'text-white' : 'text-slate-900'}`}>{item.title}</h3>
                     <ul className="space-y-3">
                       {item.points.map((p, i) => (
                         <li key={i} className={`flex items-start gap-3 text-sm transition-colors duration-300 ${theme === 'dark' ? 'text-slate-400' : 'text-slate-600'}`}>
-                          <CheckCircle2 className="text-green-500 mt-1 flex-shrink-0" size={18} />
+                          <CheckCircle2 className={`text-green-500 mt-1 flex-shrink-0 ${theme === 'dark' ? 'text-green-400' : ''}`} size={18} />
                           {p}
                         </li>
                       ))}
@@ -173,19 +173,19 @@ export default function AboutPage() {
       </section>
 
       {/* --- STATS SECTION (Squares) --- */}
-      <section className={`py-24 transition-colors duration-300 ${theme === 'dark' ? 'bg-slate-950' : 'bg-[#F8FAFC]'}`}>
+      <section className={`py-24 transition-colors duration-300 ${theme === 'dark' ? 'bg-slate-950' : 'bg-gradient-to-br from-indigo-50 to-blue-50'}`}>
         <div className="max-w-7xl mx-auto px-6 text-center">
           <h2 className={`text-3xl font-bold mb-4 transition-colors duration-300 ${theme === 'dark' ? 'text-white' : 'text-slate-900'}`}>{language === 'km' ? 'សម្រេចលទ្ធផល និងសមិទ្ធផល' : 'Results & Achievements'}</h2>
           <p className={`mb-12 transition-colors duration-300 ${theme === 'dark' ? 'text-slate-400' : 'text-slate-500'}`}>{language === 'km' ? 'មើលសេចក្តីសង្ខេបអំពីអ្វីដែលយើងបានសម្រេច' : 'A summary of what we have achieved together'}</p>
           
           <div className="grid grid-cols-2 lg:grid-cols-4 gap-6">
             {[
-              { label: language === 'km' ? 'គ្រួសារទទួលបានសុខភាព' : 'Families Healthy', count: '1000+' },
+              { label: language === 'km' ? 'គ្រួសារទទួលបានសុខភាព' : 'Families Supported', count: '1000+' },
               { label: language === 'km' ? 'កុមារទទួលបានការអប់រំ' : 'Children Educated', count: '500+' },
-              { label: language === 'km' ? 'យុវជនបានបណ្តុះបណ្តាលជំនាញ' : 'Youth Trained', count: '200+' },
+              { label: language === 'km' ? 'យុវជនបានបណ្តុះបណ្តាល' : 'Youth Trained', count: '200+' },
               { label: language === 'km' ? 'សហគមន៍បានអភិវឌ្ឍ' : 'Communities Developed', count: '500+' }
             ].map((stat, i) => (
-              <motion.div key={i} whileHover={{ y: -5 }} className={`p-10 rounded-2xl shadow-sm border transition-colors duration-300 ${theme === 'dark' ? 'bg-slate-800 border-slate-700' : 'bg-white border-slate-100'}`}>
+              <motion.div key={i} whileHover={{ y: -5 }} className={`p-10 rounded-2xl shadow-lg border transition-all duration-300 hover:shadow-xl ${theme === 'dark' ? 'bg-slate-800 border-slate-700' : 'bg-white border-slate-200'}`}>
                 <div className={`w-12 h-12 rounded-full mx-auto mb-4 transition-colors duration-300 ${theme === 'dark' ? 'bg-green-600' : 'bg-green-500'}`} />
                 <div className={`text-3xl font-bold mb-2 transition-colors duration-300 ${theme === 'dark' ? 'text-blue-400' : 'text-blue-600'}`}>{stat.count}</div>
                 <div className={`text-sm font-medium transition-colors duration-300 ${theme === 'dark' ? 'text-slate-400' : 'text-slate-500'}`}>{stat.label}</div>
@@ -195,13 +195,10 @@ export default function AboutPage() {
         </div>
       </section>
 
-     
-
       {/* --- TEAM SECTION (Carousel) --- */}
-      <section className="py-24 bg-[#F8FAFC]">
+      <section className={`py-24 transition-colors duration-300 ${theme === 'dark' ? 'bg-slate-900' : 'bg-white'}`}>
         <div className="max-w-7xl mx-auto px-6 text-center">
-          {/* Section Title */}
-          <h2 className="text-3xl font-bold mb-16 text-slate-800">សមាជិកក្រុម</h2>
+          <h2 className={`text-3xl font-bold mb-16 transition-colors duration-300 ${theme === 'dark' ? 'text-white' : 'text-slate-900'}`}>{language === 'km' ? 'ក្រុមរបស់យើង' : 'Our Team'}</h2>
 
           <div className="relative flex items-center justify-center gap-8">
             {/* Left Navigation Button */}
@@ -282,19 +279,20 @@ export default function AboutPage() {
           </div>
         </div>
       </section>
-       {/* --- PARTNERSHIP SECTION (MOU) --- */}
-      <section className={`py-24 transition-colors duration-300 ${theme === 'dark' ? 'bg-slate-900' : 'bg-white'}`}>
+
+      {/* --- PARTNERSHIP SECTION (MOU) --- */}
+      <section className={`py-24 transition-colors duration-300 ${theme === 'dark' ? 'bg-slate-950' : 'bg-gradient-to-br from-blue-50 to-indigo-50'}`}>
         <div className="max-w-7xl mx-auto px-6">
           <div className="grid lg:grid-cols-3 gap-12">
             <div className="lg:col-span-2 space-y-6">
               <h2 className={`text-3xl font-bold transition-colors duration-300 ${theme === 'dark' ? 'text-white' : 'text-slate-900'}`}>{language === 'km' ? 'ព័ត៌មានអំពីកិច្ចសហប្រតិបត្តិការ' : 'Partnership Information'}</h2>
               <div className="space-y-4">
                 {[
-                  { title: language === 'km' ? 'សហការផ្នែកបណ្តុះបណ្តាលគ្រូ' : 'Teacher Training', partner: 'ANT Center', tag: 'Workshops' },
-                  { title: language === 'km' ? 'គម្រោងបរិស្ថានជាមួយសហគមន៍' : 'Community Environment', partner: 'Green Life Group', tag: 'Community Action' },
+                  { title: language === 'km' ? 'សហការផ្នែកបណ្តុះបណ្តាលគ្រូ' : 'Teacher Training Collaboration', partner: 'ANT Center', tag: 'Workshops' },
+                  { title: language === 'km' ? 'គម្រោងបរិស្ថានជាមួយសហគមន៍' : 'Community Environmental Project', partner: 'Green Life Group', tag: 'Community Action' },
                   { title: language === 'km' ? 'MOU ជាមួយ NGO ថ្មី' : 'MOU with New NGO', partner: 'ABC Foundation', tag: 'MOU / Agreement' }
                 ].map((item, i) => (
-                  <div key={i} className={`flex gap-4 items-start p-4 border-l-4 border-blue-500 rounded-r-xl transition-colors duration-300 ${theme === 'dark' ? 'bg-slate-800' : 'bg-slate-50'}`}>
+                  <div key={i} className={`flex gap-4 items-start p-4 border-l-4 border-blue-500 rounded-r-xl transition-all duration-300 hover:shadow-sm ${theme === 'dark' ? 'bg-slate-800' : 'bg-white'}`}>
                     <div className="w-3 h-3 rounded-full bg-blue-500 mt-2" />
                     <div>
                       <h4 className={`font-bold transition-colors duration-300 ${theme === 'dark' ? 'text-white' : 'text-slate-900'}`}>{item.title}</h4>
@@ -306,21 +304,21 @@ export default function AboutPage() {
               </div>
             </div>
 
-            <div className="bg-slate-50 p-8 rounded-[32px]">
-              <h3 className="font-bold text-xl mb-6">{language === 'km' ? 'ប្រភេទសហការ' : 'Types of Support'}</h3>
+            <div className={`p-8 rounded-[32px] shadow-lg border transition-colors duration-300 ${theme === 'dark' ? 'bg-slate-800 border-slate-700' : 'bg-white border-slate-200'}`}>
+              <h3 className={`font-bold text-xl mb-6 transition-colors duration-300 ${theme === 'dark' ? 'text-white' : 'text-slate-900'}`}>{language === 'km' ? 'ប្រភេទសហការ' : 'Types of Partnerships'}</h3>
               <ul className="space-y-6">
                 <li className="flex gap-4">
-                  <div className="w-10 h-10 rounded-full bg-white flex items-center justify-center shadow-sm"><Handshake size={20} /></div>
+                  <div className={`w-10 h-10 rounded-full flex items-center justify-center shadow-sm transition-colors duration-300 ${theme === 'dark' ? 'bg-slate-700' : 'bg-white'}`}><Handshake size={20} className={`${theme === 'dark' ? 'text-blue-400' : 'text-blue-500'}`} /></div>
                   <div>
-                    <h5 className="font-bold text-sm">{language === 'km' ? 'កិច្ចព្រមព្រៀង (MOU)' : 'MOU'}</h5>
-                    <p className="text-xs text-slate-500">កំណត់គោលដៅ សិទ្ធិ និងការទទួលខុសត្រូវ</p>
+                    <h5 className={`font-bold text-sm transition-colors duration-300 ${theme === 'dark' ? 'text-white' : 'text-slate-900'}`}>{language === 'km' ? 'កិច្ចព្រមព្រៀង (MOU)' : 'MOU'}</h5>
+                    <p className={`text-xs transition-colors duration-300 ${theme === 'dark' ? 'text-slate-400' : 'text-slate-500'}`}>កំណត់គោលដៅ សិទ្ធិ និងការទទួលខុសត្រូវ</p>
                   </div>
                 </li>
                 <li className="flex gap-4">
-                  <div className="w-10 h-10 rounded-full bg-white flex items-center justify-center shadow-sm"><LayoutDashboard size={20} /></div>
+                  <div className={`w-10 h-10 rounded-full flex items-center justify-center shadow-sm transition-colors duration-300 ${theme === 'dark' ? 'bg-slate-700' : 'bg-white'}`}><LayoutDashboard size={20} className={`${theme === 'dark' ? 'text-green-400' : 'text-green-500'}`} /></div>
                   <div>
-                    <h5 className="font-bold text-sm">{language === 'km' ? 'សកម្មភាពរួម' : 'Joint Activities'}</h5>
-                    <p className="text-xs text-slate-500">Workshop, Training, Hackathon...</p>
+                    <h5 className={`font-bold text-sm transition-colors duration-300 ${theme === 'dark' ? 'text-white' : 'text-slate-900'}`}>{language === 'km' ? 'សកម្មភាពរួម' : 'Joint Activities'}</h5>
+                    <p className={`text-xs transition-colors duration-300 ${theme === 'dark' ? 'text-slate-400' : 'text-slate-500'}`}>Workshop, Training, Hackathon...</p>
                   </div>
                 </li>
               </ul>
