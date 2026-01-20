@@ -4,7 +4,8 @@ import Link from 'next/link'
 import { usePathname } from 'next/navigation'
 import { useEffect, useState, useRef } from 'react'
 import clsx from 'clsx'
-import ThemeToggle from './ThemeToggle'
+import LanguageSwitcher from './LanguageSwitcher'
+import { useLanguage } from '@/contexts/LanguageContext'
 import { auth } from '@/lib/firebaseConfig'
 import { onAuthStateChanged, signOut } from 'firebase/auth'
 import { supabase } from '@/lib/supabaseClient'
@@ -13,6 +14,7 @@ import { User, LogOut, Settings } from 'lucide-react'
 export default function Navbar() {
   const pathname = usePathname()
   const [user, setUser] = useState<any>(null)
+  const { t } = useLanguage()
 
   useEffect(() => {
     const unsubscribe = onAuthStateChanged(auth, (currentUser) => {
@@ -21,13 +23,13 @@ export default function Navbar() {
     return () => unsubscribe()
   }, [])
 
-  const link = (href: string, label: string) => (
+  const link = (href: string, labelKey: string) => (
     <Link href={href} className={clsx(
       'px-4 py-2 rounded-lg text-sm font-semibold transition duration-300',
       pathname === href 
         ? 'text-indigo-600 dark:text-indigo-400 bg-indigo-50 dark:bg-indigo-950/30' 
         : 'text-slate-700 dark:text-slate-300 hover:text-indigo-600 dark:hover:text-indigo-400 hover:bg-slate-100 dark:hover:bg-slate-800/50'
-    )}>{label}</Link>
+    )}>{t(labelKey)}</Link>
   )
 
   return (
@@ -35,19 +37,19 @@ export default function Navbar() {
       <div className="mx-auto max-w-6xl px-4 py-4 flex items-center justify-between">
         <Link href="/" className="text-2xl font-bold bg-gradient-to-r from-indigo-600 to-purple-600 bg-clip-text text-transparent hover:opacity-80 transition">docu<span className="text-brand">Link</span></Link>
         <nav className="hidden md:flex items-center gap-6">
-          {link('/', 'ទំព័រដើម')}
-          {link('/documents', 'រុករក')}
-          {link('/upload', 'ផ្ទុក')}
-          {link('/favorites', 'ចូលចិត្ត')}
-          {link('/profile', 'ប្រវត្តិលម្អិត')}
+          {link('/', 'home')}
+          {link('/documents', 'explore')}
+          {link('/upload', 'upload')}
+          {link('/about', 'aboutUs')}
+          {link('/contact', 'contactUs')}
           {user && (<AdminLink />)}
         </nav>
         <div className="flex items-center gap-3">
-          <ThemeToggle />
+          <LanguageSwitcher />
           {!user ? (
             <>
-              <Link href="/auth/login" className="px-4 py-2 text-slate-700 dark:text-slate-300 font-semibold hover:text-indigo-600 dark:hover:text-indigo-400 transition duration-200">ចូល</Link>
-              <Link href="/auth/signup" className="px-5 py-2 bg-gradient-to-r from-indigo-600 to-purple-600 text-white font-semibold rounded-lg hover:shadow-lg hover:scale-105 transition duration-300">ចុះឈ្មោះ</Link>
+              <Link href="/auth/login" className="px-4 py-2 text-slate-700 dark:text-slate-300 font-semibold hover:text-indigo-600 dark:hover:text-indigo-400 transition duration-200">{t('login')}</Link>
+              <Link href="/auth/signup" className="px-5 py-2 bg-gradient-to-r from-indigo-600 to-purple-600 text-white font-semibold rounded-lg hover:shadow-lg hover:scale-105 transition duration-300">{t('signup')}</Link>
             </>
           ) : (
             <ProfileMenu user={user} />
@@ -62,6 +64,7 @@ function ProfileMenu({ user }: { user: any }) {
   const [open, setOpen] = useState(false)
   const dropdownRef = useRef<HTMLDivElement>(null)
   const pathname = usePathname()
+  const { t } = useLanguage()
 
   useEffect(() => {
     const handleClickOutside = (event: MouseEvent) => {
@@ -130,7 +133,7 @@ function ProfileMenu({ user }: { user: any }) {
               className="flex items-center gap-3 px-5 py-3 text-slate-700 dark:text-slate-300 hover:bg-indigo-50 dark:hover:bg-indigo-950/20 transition duration-200 text-sm font-medium"
             >
               <User size={18} className="text-indigo-600 dark:text-indigo-400" />
-              <span>ទស្សនាលម្អិត</span>
+              <span>{t('viewProfile')}</span>
             </Link>
 
             <button
@@ -138,7 +141,7 @@ function ProfileMenu({ user }: { user: any }) {
               className="w-full flex items-center gap-3 px-5 py-3 text-rose-600 dark:text-rose-400 hover:bg-rose-50 dark:hover:bg-rose-950/20 transition duration-200 border-t border-slate-200 dark:border-slate-700 text-sm font-medium"
             >
               <LogOut size={18} />
-              <span>ចាកចេញ</span>
+              <span>{t('signOut')}</span>
             </button>
           </div>
         </div>
@@ -150,6 +153,7 @@ function ProfileMenu({ user }: { user: any }) {
 function AdminLink() {
   const pathname = usePathname()
   const [isAdmin, setIsAdmin] = useState(false)
+  const { t } = useLanguage()
   useEffect(() => {
     const unsubscribe = onAuthStateChanged(auth, async (user) => {
       if (!user) { setIsAdmin(false); return }
@@ -165,6 +169,6 @@ function AdminLink() {
       pathname === '/admin'
         ? 'text-indigo-600 dark:text-indigo-400 bg-indigo-50 dark:bg-indigo-950/30'
         : 'text-slate-700 dark:text-slate-300 hover:text-indigo-600 dark:hover:text-indigo-400 hover:bg-slate-100 dark:hover:bg-slate-800/50'
-    )}>ឯកសារគ្រប់គ្រង</Link>
+    )}>{t('admin')}</Link>
   )
 }

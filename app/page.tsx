@@ -1,5 +1,8 @@
 'use client'
 import { useState, useEffect } from 'react'
+import Link from 'next/link'
+import { useLanguage } from '@/contexts/LanguageContext'
+import { useTheme } from '@/contexts/ThemeContext'
 import {
   FileText, Upload, Search, Shield, Zap,
   Menu, ChevronRight, Globe, Layers, Shapes,
@@ -18,21 +21,21 @@ import {
 } from 'lucide-react'
 import { supabase } from '@/lib/supabaseClient'
 
-const DocCard = ({ doc, onClick }: { doc: any, onClick: () => void }) => {
+const DocCard = ({ doc, onClick, t, theme }: { doc: any, onClick: () => void, t: any, theme: string }) => {
   const CATEGORIES = [
-    { id: 'academics', label: 'សិក្សាធិការ', icon: BookOpen, color: 'from-purple-500 via-pink-500 to-red-500', emoji: '📚' },
-    { id: 'tech', label: 'បច្ចេកវិទ្យា', icon: Code, color: 'from-cyan-500 via-blue-500 to-indigo-500', emoji: '💻' },
-    { id: 'business', label: 'ធុរកិច្ច', icon: TrendingUp, color: 'from-emerald-500 via-teal-500 to-cyan-500', emoji: '💼' },
-    { id: 'legal', label: 'ច្បាប់', icon: Shield, color: 'from-orange-500 via-red-500 to-pink-500', emoji: '⚖️' },
+    { id: 'academics', label: t('academics'), icon: BookOpen, color: 'from-purple-500 via-pink-500 to-red-500', emoji: '📚' },
+    { id: 'tech', label: t('technology'), icon: Code, color: 'from-cyan-500 via-blue-500 to-indigo-500', emoji: '💻' },
+    { id: 'business', label: t('business'), icon: TrendingUp, color: 'from-emerald-500 via-teal-500 to-cyan-500', emoji: '💼' },
+    { id: 'legal', label: t('legal'), icon: Shield, color: 'from-orange-500 via-red-500 to-pink-500', emoji: '⚖️' },
   ]
   const cat = CATEGORIES.find(c => c.id === doc.category_id) || CATEGORIES[0]
   return (
     <div
       onClick={onClick}
-      className="group relative bg-white/80 backdrop-blur-sm border border-white/20 p-6 rounded-3xl shadow-lg hover:shadow-2xl transition-all duration-500 cursor-pointer hover:-translate-y-2 hover:scale-[1.02] overflow-hidden"
+      className={`group relative backdrop-blur-sm border p-6 rounded-3xl shadow-lg hover:shadow-2xl transition-all duration-500 cursor-pointer hover:-translate-y-2 hover:scale-[1.02] overflow-hidden ${theme === 'dark' ? 'bg-slate-800/80 border-slate-700/50' : 'bg-white/80 border-white/20'}`}
     >
       {/* Gradient overlay */}
-      <div className="absolute inset-0 bg-gradient-to-br from-white/50 to-transparent opacity-0 group-hover:opacity-100 transition-opacity duration-500" />
+      <div className={`absolute inset-0 opacity-0 group-hover:opacity-100 transition-opacity duration-500 ${theme === 'dark' ? 'bg-gradient-to-br from-slate-700/50 to-transparent' : 'bg-gradient-to-br from-white/50 to-transparent'}`} />
       
       <div className="relative z-10">
         <div className="flex justify-between items-start mb-6">
@@ -40,32 +43,32 @@ const DocCard = ({ doc, onClick }: { doc: any, onClick: () => void }) => {
             <span className="text-2xl">{cat.emoji}</span>
           </div>
           <div className="flex gap-2">
-             <button className="p-2.5 bg-white/80 backdrop-blur-sm text-slate-400 rounded-xl hover:text-rose-500 transition-all duration-300 hover:scale-110 shadow-sm">
+             <button className={`p-2.5 backdrop-blur-sm rounded-xl transition-all duration-300 hover:scale-110 shadow-sm ${theme === 'dark' ? 'bg-slate-700/80 text-slate-400 hover:text-rose-400' : 'bg-white/80 text-slate-400 hover:text-rose-500'}`}>
                <Heart size={16} />
              </button>
-             <button className="p-2.5 bg-white/80 backdrop-blur-sm text-slate-400 rounded-xl hover:text-indigo-600 transition-all duration-300 hover:scale-110 shadow-sm">
+             <button className={`p-2.5 backdrop-blur-sm rounded-xl transition-all duration-300 hover:scale-110 shadow-sm ${theme === 'dark' ? 'bg-slate-700/80 text-slate-400 hover:text-blue-400' : 'bg-white/80 text-slate-400 hover:text-indigo-600'}`}>
                <Share2 size={16} />
              </button>
           </div>
         </div>
         
-        <h3 className="text-xl font-black text-slate-900 mb-3 leading-tight group-hover:text-indigo-600 transition-colors duration-300 line-clamp-2">
+        <h3 className={`text-xl font-black mb-3 leading-tight group-hover:text-indigo-600 transition-colors duration-300 line-clamp-2 ${theme === 'dark' ? 'text-white' : 'text-slate-900'}`}>
           {doc.title}
         </h3>
-        <p className="text-sm font-semibold text-slate-500 mb-6 flex items-center gap-2">
+        <p className={`text-sm font-semibold mb-6 flex items-center gap-2 ${theme === 'dark' ? 'text-slate-400' : 'text-slate-500'}`}>
           <User size={14} />
           By Author
         </p>
         
         <div className="flex flex-wrap gap-2 mb-8">
           {['Study', 'Trending'].map(tag => (
-            <span key={tag} className="px-4 py-2 bg-gradient-to-r from-purple-100 via-pink-100 to-cyan-100 text-purple-700 text-xs font-black uppercase rounded-full border-2 border-white/50 shadow-lg hover:scale-105 transition-all duration-300 animate-pulse">
+            <span key={tag} className={`px-4 py-2 text-xs font-black uppercase rounded-full border-2 shadow-lg hover:scale-105 transition-all duration-300 animate-pulse ${theme === 'dark' ? 'bg-slate-700/80 text-blue-300 border-slate-600' : 'bg-gradient-to-r from-purple-100 via-pink-100 to-cyan-100 text-purple-700 border-white/50'}`}>
               #{tag}
             </span>
           ))}
         </div>
 
-        <div className="mt-auto pt-6 border-t border-white/30 flex items-center justify-between">
+        <div className={`mt-auto pt-6 border-t flex items-center justify-between ${theme === 'dark' ? 'border-slate-700/50' : 'border-white/30'}`}>
           <div className="flex items-center gap-2 text-sm font-black">
             <div className="flex gap-1">
               {[...Array(5)].map((_, i) => (
@@ -85,17 +88,72 @@ const DocCard = ({ doc, onClick }: { doc: any, onClick: () => void }) => {
 }
 
 export default function Homepage() {
+  const { t } = useLanguage()
+  const { theme } = useTheme()
   const CATEGORIES = [
-    { id: 'academics', label: 'សិក្សាធិការ', icon: BookOpen, color: 'from-purple-500 via-pink-500 to-red-500', emoji: '📚' },
-    { id: 'tech', label: 'បច្ចេកវិទ្យា', icon: Code, color: 'from-cyan-500 via-blue-500 to-indigo-500', emoji: '💻' },
-    { id: 'business', label: 'ធុរកិច្ច', icon: TrendingUp, color: 'from-emerald-500 via-teal-500 to-cyan-500', emoji: '💼' },
-    { id: 'legal', label: 'ច្បាប់', icon: Shield, color: 'from-orange-500 via-red-500 to-pink-500', emoji: '⚖️' },
+    { id: 'academics', label: t('academics'), icon: BookOpen, color: 'from-purple-500 via-pink-500 to-red-500', emoji: '📚' },
+    { id: 'tech', label: t('technology'), icon: Code, color: 'from-cyan-500 via-blue-500 to-indigo-500', emoji: '💻' },
+    { id: 'business', label: t('business'), icon: TrendingUp, color: 'from-emerald-500 via-teal-500 to-cyan-500', emoji: '💼' },
+    { id: 'legal', label: t('legal'), icon: Shield, color: 'from-orange-500 via-red-500 to-pink-500', emoji: '⚖️' },
   ]
 
   const [docs, setDocs] = useState<any[]>([])
   const [loading, setLoading] = useState(true)
   const [pageLoading, setPageLoading] = useState(true)
   const [selectedDoc, setSelectedDoc] = useState<any>(null)
+  const [openFaq, setOpenFaq] = useState<number | null>(0)
+
+  // Sample Khmer documents for display
+  const sampleDocs = [
+    {
+      id: 'sample-1',
+      title: 'ឯកសារថ្មីៗ - គណិតវិទ្យាគ្រឹះ',
+      description: 'ស្វែងរកឯកសារដែលត្រូវនឹងតម្រូវការសិក្សារបស់អ្នក',
+      file_type: 'pdf',
+      category_id: 'academics',
+      created_at: new Date().toISOString()
+    },
+    {
+      id: 'sample-2',
+      title: 'ឯកសារថ្មីៗ - ប្រលេឌីកូដ JavaScript',
+      description: 'ស្វែងរកឯកសារដែលត្រូវនឹងតម្រូវការសិក្សារបស់អ្នក',
+      file_type: 'pdf',
+      category_id: 'tech',
+      created_at: new Date().toISOString()
+    },
+    {
+      id: 'sample-3',
+      title: 'ឯកសារថ្មីៗ - ដោះលែងអាជីវកម្ម',
+      description: 'ស្វែងរកឯកសារដែលត្រូវនឹងតម្រូវការសិក្សារបស់អ្នក',
+      file_type: 'docx',
+      category_id: 'business',
+      created_at: new Date().toISOString()
+    },
+    {
+      id: 'sample-4',
+      title: 'ឯកសារថ្មីៗ - ច្បាប់ប៉ាឡាម៉ែត្រ',
+      description: 'ស្វែងរកឯកសារដែលត្រូវនឹងតម្រូវការសិក្សារបស់អ្នក',
+      file_type: 'pdf',
+      category_id: 'legal',
+      created_at: new Date().toISOString()
+    },
+    {
+      id: 'sample-5',
+      title: 'ឯកសារថ្មីៗ - រូបវិទ្យាទូទៅ',
+      description: 'ស្វែងរកឯកសារដែលត្រូវនឹងតម្រូវការសិក្សារបស់អ្នក',
+      file_type: 'pdf',
+      category_id: 'academics',
+      created_at: new Date().toISOString()
+    },
+    {
+      id: 'sample-6',
+      title: 'ឯកសារថ្មីៗ - ការលម្អិតលម្អិត AI',
+      description: 'ស្វែងរកឯកសារដែលត្រូវនឹងតម្រូវការសិក្សារបស់អ្នក',
+      file_type: 'pptx',
+      category_id: 'tech',
+      created_at: new Date().toISOString()
+    }
+  ]
 
   useEffect(() => {
     const loadDocs = async () => {
@@ -104,7 +162,8 @@ export default function Homepage() {
         .select('id,title,description,file_type,category_id,created_at')
         .order('created_at', { ascending: false })
         .limit(24)
-      setDocs(data || [])
+      // Use sample docs if no data from database
+      setDocs(data && data.length > 0 ? data : sampleDocs)
       setLoading(false)
     }
     loadDocs()
@@ -117,29 +176,127 @@ export default function Homepage() {
   }, [])
 
   return (
-    <div className="min-h-screen bg-white">
-      {/* Hero Section */}
-      <section className="relative py-32 px-6 bg-gradient-to-br from-blue-50 via-purple-50 to-indigo-50 animate-gradient-x">
-        <div className="max-w-6xl mx-auto text-center animate-fade-in-up">
-          <h1 className="text-6xl lg:text-7xl font-black leading-tight mb-8 text-slate-900 animate-bounce">
-            ចែករំលែកឯកសារ<br/>
-            <span className="text-indigo-600 animate-pulse">ឌីជីថល</span><br/>
-            សម្រាប់និស្សិត
-          </h1>
+    <div className={`min-h-screen transition-colors duration-300 ${theme === 'dark' ? 'bg-slate-950 text-white' : 'bg-white text-slate-900'}`}>
+      {/* Hero Section (updated with two-column layout + animated blobs) */}
+      <section className={`relative py-20 px-6 overflow-hidden transition-colors duration-300 ${theme === 'dark' ? 'bg-gradient-to-br from-slate-950 via-slate-900 to-slate-950' : 'bg-gradient-to-br from-indigo-50 via-white to-purple-50'}`}>
+        <div className="absolute inset-0 opacity-40 blur-3xl pointer-events-none">
+          <div className="hero-blob-1" />
+          <div className="hero-blob-2" />
+        </div>
 
-          <p className="text-xl text-slate-600 max-w-3xl mx-auto mb-12 leading-relaxed animate-fade-in-up" style={{animationDelay: '0.2s'}}>
-            វេទិកាចែករំលែកឯកសារឌីជីថលដ៏ទំនើបបំផុតសម្រាប់និស្សិតកម្ពុជា។
-            ចែករំលែក រៀនសូត្រ និងរីកចម្រើនជាមួយគ្នា។
-          </p>
+        <div className="max-w-6xl mx-auto relative z-10 grid md:grid-cols-2 gap-8 items-center">
+          <div className="text-left">
+            <h1 className={`text-4xl md:text-5xl lg:text-6xl font-black mb-6 leading-tight animate-fade-in-left transition-colors duration-300 ${theme === 'dark' ? 'text-white' : 'text-slate-900'}`}>
+              {t('heroTitleNew')}
+            </h1>
+            <p className={`text-lg mb-8 max-w-xl animate-fade-in-left animate-delay-100 transition-colors duration-300 ${theme === 'dark' ? 'text-slate-400' : 'text-slate-600'}`}>
+              {t('heroDescriptionNew')}
+            </p>
 
-          <div className="flex flex-col sm:flex-row gap-6 justify-center animate-fade-in-up" style={{animationDelay: '0.4s'}}>
-            <button className="bg-indigo-600 text-white px-12 py-4 rounded-lg font-bold text-lg hover:bg-indigo-700 transition-all duration-300 hover:scale-110 hover:rotate-1 flex items-center justify-center gap-3 animate-pulse">
-              ផ្ទុកឯកសារឡើង
-              <Upload size={20} className="animate-bounce" />
-            </button>
-            <button className="border-2 border-indigo-600 text-indigo-600 px-12 py-4 rounded-lg font-bold text-lg hover:bg-indigo-50 transition-all duration-300 hover:scale-110 hover:-rotate-1">
-              ស្វែងរកឯកសារ
-            </button>
+            <div className="flex flex-col sm:flex-row gap-4 items-start sm:items-center">
+              <button className={`px-6 py-3 rounded-lg font-bold transition-transform duration-300 hover:scale-105 flex items-center gap-2 animate-fade-in-left animate-delay-200 ${theme === 'dark' ? 'bg-blue-600 text-white hover:bg-blue-700' : 'bg-indigo-600 text-white hover:bg-indigo-700'}`}>
+                {t('getStarted')}
+                <Upload size={18} />
+              </button>
+              <button className="border-2 border-indigo-600 text-indigo-600 px-6 py-3 rounded-lg font-bold hover:bg-indigo-50 transition-transform duration-300 hover:scale-105 animate-fade-in-left animate-delay-300">
+                {t('improveWorkflow')}
+              </button>
+            </div>
+
+            <div className="mt-8 flex gap-6 items-center animate-fade-in-left animate-delay-400">
+              <div className="text-sm text-slate-600">✅ <strong className="text-slate-900">{t('documentsShared')}</strong></div>
+              <div className="text-sm text-slate-600">👥 <strong className="text-slate-900">{t('activeUsers')}</strong></div>
+              <div className="text-sm text-slate-600">⏱ {t('support')}</div>
+            </div>
+          </div>
+
+          <div className="relative">
+            <div className="hero-graphic w-full h-80 md:h-96 rounded-2xl overflow-hidden shadow-2xl bg-white/60 border border-white/30 flex items-center justify-center">
+              {/* Decorative animated SVG blobs */}
+              <svg className="absolute inset-0 w-full h-full" viewBox="0 0 800 600" preserveAspectRatio="xMidYMid slice" xmlns="http://www.w3.org/2000/svg">
+                <defs>
+                  <linearGradient id="g1" x1="0%" x2="100%" y1="0%" y2="100%">
+                    <stop offset="0%" stopColor="#7c3aed" />
+                    <stop offset="100%" stopColor="#06b6d4" />
+                  </linearGradient>
+                  <linearGradient id="g2" x1="0%" x2="100%" y1="0%" y2="100%">
+                    <stop offset="0%" stopColor="#ef4444" />
+                    <stop offset="100%" stopColor="#f97316" />
+                  </linearGradient>
+                </defs>
+
+                <g className="animate-float" transform="translate(120 60)">
+                  <path fill="url(#g1)" opacity="0.9" d="M120 0C170 0 220 20 240 60C260 100 250 160 210 190C170 220 100 220 60 190C20 160 10 100 30 60C50 20 70 0 120 0Z" />
+                </g>
+
+                <g className="animate-float" transform="translate(420 160)">
+                  <path fill="url(#g2)" opacity="0.85" d="M100 0C140 0 180 18 200 48C220 78 210 120 180 150C150 180 90 190 60 160C30 130 10 90 20 60C30 30 60 0 100 0Z" />
+                </g>
+
+                <g className="animate-spin-slow opacity-60" transform="translate(320 320)">
+                  <circle cx="0" cy="0" r="36" fill="#fff" opacity="0.06" />
+                  <circle cx="0" cy="0" r="20" fill="#fff" opacity="0.08" />
+                </g>
+              </svg>
+
+              {/* Simple document card illustration */}
+              <div className="relative z-10 w-4/5 md:w-3/5 p-6 bg-white rounded-xl shadow-xl border border-white/40">
+                <div className="h-2 w-2/3 bg-indigo-100 rounded mb-6" />
+                <div className="space-y-3">
+                  <div className="h-4 bg-slate-100 rounded w-5/6" />
+                  <div className="h-3 bg-slate-100 rounded w-3/4" />
+                  <div className="h-3 bg-slate-100 rounded w-2/3" />
+                </div>
+                <div className="mt-6 flex items-center justify-between">
+                  <div className="flex items-center gap-3">
+                    <div className="w-8 h-8 rounded bg-indigo-50 flex items-center justify-center text-indigo-600">📄</div>
+                    <div className="text-sm font-bold text-slate-700">Sample Document.pdf</div>
+                  </div>
+                  <div className="text-sm text-slate-500">2.1 MB</div>
+                </div>
+              </div>
+            </div>
+          </div>
+        </div>
+      </section>
+
+
+      {/* About / Mission Section — updated to match provided UI (large circular image + features list) */}
+      <section className="py-20 px-6 bg-gray-50">
+        <div className="max-w-6xl mx-auto grid md:grid-cols-2 gap-12 items-center">
+          {/* Left: large circular image */}
+          <div className="flex items-center justify-center">
+            <div className="w-96 h-96 md:w-[480px] md:h-[480px] rounded-full overflow-hidden bg-white shadow-2xl border border-white/40 flex items-center justify-center">
+              <img src="/images/about-documents.jpg" alt="About image" className="w-full h-full object-cover" />
+            </div>
+          </div>
+
+          {/* Right: heading + feature list */}
+          <div>
+            <div className="mb-6">
+              <h2 className="text-3xl md:text-4xl font-black mb-4 text-slate-900">គោលបំណង និងបេសកកម្មរបស់ DocuLink</h2>
+              <p className="text-lg text-slate-600 max-w-xl">យើងជាវេទិកាឌីជីថលដែលបង្កើតឡើងដោយនិស្សិតសម្រាប់និស្សិត ដើម្បីផ្តល់ជូនឱកាសចែករំលែកចំណេះដឹង និងធនធានសិក្សា។</p>
+            </div>
+
+            <div className="space-y-4">
+              {[
+                { icon: BookOpen, title: 'ចែករំលែកសម្ភារៈសិក្សា', desc: 'ចែករំលែកកិច្ចការដ្ឋាន សៀវភៅ និងសម្ភារៈសិក្សា' },
+                { icon: Users, title: 'សហគមន៍និស្សិត', desc: 'ភ្ជាប់និស្សិតក្នុងការរៀន និងចែករំលែក' },
+                { icon: FileText, title: 'ឯកសារឌីជីថល', desc: 'ផ្តល់ឯកសារដែលងាយស្រួលចូលប្រើ' },
+                { icon: Search, title: 'ស្វែងរកងាយស្រួល', desc: 'ប្រព័ន្ធស្វែងរកឯកសារដែលមានប្រសិទ្ធភាព' },
+                { icon: Shield, title: 'សុវត្ថិភាព', desc: 'ការពារឯកសារ និងភាពឯកជនភាព' }
+              ].map((item, i) => (
+                <div key={i} className="flex gap-4 items-start bg-white p-4 rounded-2xl border border-gray-100 shadow-sm hover:shadow-md transition-shadow duration-250">
+                  <div className="w-14 h-14 rounded-full flex items-center justify-center bg-indigo-50 text-indigo-600 shrink-0">
+                    <item.icon size={20} />
+                  </div>
+                  <div className="flex-1">
+                    <div className="text-slate-900 font-bold">{item.title}</div>
+                    <div className="text-slate-600 text-sm">{item.desc}</div>
+                  </div>
+                </div>
+              ))}
+            </div>
           </div>
         </div>
       </section>
@@ -149,10 +306,10 @@ export default function Homepage() {
         <div className="max-w-6xl mx-auto">
           <div className="text-center mb-16">
             <h2 className="text-4xl font-black mb-6 text-slate-900">
-              ឯកសារថ្មីៗ
+              {t('recentDocuments')}
             </h2>
             <p className="text-xl text-slate-600">
-              ស្វែងរកឯកសារដែលត្រូវនឹងតម្រូវការសិក្សារបស់អ្នក
+              {t('searchDocuments')}
             </p>
           </div>
 
@@ -187,136 +344,72 @@ export default function Homepage() {
           ) : (
             <div className="grid md:grid-cols-2 lg:grid-cols-3 gap-8">
               {docs.map((doc) => (
-                <DocCard key={doc.id} doc={doc} onClick={() => setSelectedDoc(doc)} />
+                <DocCard key={doc.id} doc={doc} onClick={() => setSelectedDoc(doc)} t={t} theme={theme} />
               ))}
             </div>
           )}
+        </div>
+      </section>
+      {/* FAQ Section - Khmer styled like Mission */}
+      <section className="py-24 px-6 bg-white">
+        <div className="max-w-6xl mx-auto">
+          <div className="text-center mb-16">
+            <div className="inline-flex items-center gap-2 bg-cyan-100 text-cyan-700 px-6 py-2 rounded-full font-bold mb-6">
+              <span>📖</span>
+              <span>សំណួរញឹកញាប់</span>
+            </div>
+            <h2 className="text-4xl font-black mb-4 text-slate-900">សំណួរញឹកញាប់ (FAQ)</h2>
+            <p className="text-lg text-slate-600 max-w-2xl mx-auto">សូមស្វាគមន៍ទៅកាន់ផ្នែកសួលសម្ងាក់របស់យើង សូមស្វែងយល់ពីព័ត៌មានលម្អិត</p>
+          </div>
+
+          <div className="space-y-4">
+            {[
+              { 
+                q: 'តើ DocuLinks ជាវេទិកាឥតគិតថ្លៃឬ?', 
+                a: 'បាទ! DocuLinks ជាវេទិកាឥតគិតថ្លៃទាំងស្រុង។ អ្នកអាចផ្ទុកឯកសារ ទាញយកឯកសារ និងចែករំលែកចំណេះដឹងបានឥតគិតថ្លៃ។'
+              },
+              { 
+                q: 'តើខ្ញុំអាចផ្ទុកឯកសារប្រភេទណាដែលលើប្រព័ន្ធ?', 
+                a: 'អ្នកអាចផ្ទុក PDF, DOC, DOCX, PPT, PPTX, XLS, XLSX, រូបភាព និងឯកសារផ្សេងទៀតដែលទាក់ទងនឹងការសិក្សា។'
+              },
+              { 
+                q: 'តើឯកសាររបស់ខ្ញុំមានសុវត្ថិភាពឬ?', 
+                a: 'បាទ! យើងយកសុវត្ថិភាពឯកសារយ៉ាងធ្ងន់ធ្ងរ។ ឯកសារទាំងអស់របស់អ្នកត្រូវបានការពារក្នុងលក្ខណៈសុវត្ថិភាព និងឯកជនភាព។'
+              },
+              { 
+                q: 'តើខ្ញុំអាចចែករំលែកឯកសាររបស់ខ្ញុំទៅនឹងនិស្សិតផ្សេងទៀតបានឬ?', 
+                a: 'បាទ! នោះជាគោលបំណងសំខាន់របស់វេទិកាយើង។ អ្នកអាចចែករំលែកឯកសាररបស់អ្នកទៅកាន់និស្សិតផ្សេងទៀតបានយ៉ាងងាយស្រួល។'
+              }
+            ].map((item, idx) => {
+              const open = openFaq === idx
+              return (
+                <div key={idx} className={`faq-card bg-slate-50 rounded-2xl border-2 transition-all duration-300 ${open ? 'border-slate-400 shadow-lg' : 'border-slate-200 hover:border-slate-300'}`}>
+                  <button 
+                    onClick={() => setOpenFaq(open ? null : idx)} 
+                    className="w-full flex items-center justify-between p-6 text-left"
+                  >
+                    <h3 className="text-lg font-bold text-slate-900 flex-1">{item.q}</h3>
+                    <div className={`w-10 h-10 rounded-full flex items-center justify-center flex-shrink-0 ml-4 transition-all duration-300 ${open ? 'bg-cyan-500 text-white' : 'bg-cyan-400 text-white'}`}>
+                      {open ? <X size={20} /> : <Plus size={20} />}
+                    </div>
+                  </button>
+
+                  <div className={`overflow-hidden transition-all duration-300 ${open ? 'max-h-96' : 'max-h-0'}`}>
+                    <div className="px-6 pb-6 text-slate-600 border-t border-slate-200 pt-6">
+                      <p className="leading-relaxed">{item.a}</p>
+                    </div>
+                  </div>
+                </div>
+              )
+            })}
+          </div>
 
           <div className="text-center mt-12">
-            <button className="bg-indigo-600 text-white px-8 py-4 rounded-lg font-bold hover:bg-indigo-700 transition-colors duration-300 flex items-center gap-2 mx-auto">
-              <Search size={20} />
-              មើលឯកសារទាំងអស់
+            <p className="text-slate-600 mb-4">មិនឃើញសម្ងាក់ដែលលោកអ្នកកំពុងស្វែងរក?</p>
+            <button className="inline-flex items-center gap-2 bg-cyan-500 text-white px-8 py-3 rounded-full font-bold hover:bg-cyan-600 transition-all duration-300 shadow-lg hover:shadow-xl">
+              <MessageCircle size={18} />
+              <span>ទាក់ទងយើងឥឡូវនេះ</span>
             </button>
-          </div>
-        </div>
-      </section>
-
-      {/* About Us Section */}
-      <section className="py-24 px-6 bg-gray-50 animate-fade-in-up">
-        <div className="max-w-6xl mx-auto">
-          <div className="text-center mb-16">
-            <h2 className="text-4xl font-black mb-6 text-slate-900 animate-bounce">
-              គោលបំណង និងបេសកកម្មរបស់ DocuLink
-            </h2>
-            <p className="text-xl text-slate-600 max-w-3xl mx-auto animate-pulse">
-              យើងជាវេទិកាឌីជីថលដែលបង្កើតឡើងដោយនិស្សិតសម្រាប់និស្សិត
-              ដើម្បីផ្តល់ជូនឱកាសចែករំលែកចំណេះដឹង និងធនធានសិក្សា។
-            </p>
-          </div>
-
-          <div className="grid md:grid-cols-2 lg:grid-cols-3 gap-8">
-            {[
-              { icon: BookOpen, title: 'ចែករំលែកសម្ភារៈសិក្សា', desc: 'ចែករំលែកកិច្ចការដ្ឋាន សៀវភៅ និងសម្ភារៈសិក្សា' },
-              { icon: Users, title: 'សហគមន៍និស្សិត', desc: 'ភ្ជាប់និស្សិតទាំងអស់គ្នាក្នុងការរៀនសូត្រ និងចែករំលែក' },
-              { icon: FileText, title: 'ឯកសារឌីជីថល', desc: 'ផ្តល់ជូនឯកសារឌីជីថលដែលងាយស្រួលចូលប្រើ' },
-              { icon: Search, title: 'ស្វែងរកងាយស្រួល', desc: 'ប្រព័ន្ធស្វែងរកឯកសារដ៏មានប្រសិទ្ធភាព' },
-              { icon: Shield, title: 'សុវត្ថិភាព', desc: 'ការពារឯកសារនិងភាពឯកជនភាពរបស់អ្នកប្រើប្រាស់' }
-            ].map((item, index) => (
-              <div key={index} className="bg-white p-8 rounded-xl shadow-lg hover:shadow-2xl transition-all duration-500 hover:scale-105 hover:rotate-2 animate-fade-in-up border border-gray-100" style={{animationDelay: `${index * 0.1}s`}}>
-                <div className="w-16 h-16 bg-indigo-100 rounded-lg flex items-center justify-center text-indigo-600 mb-6 animate-pulse">
-                  <item.icon size={32} className="animate-bounce" />
-                </div>
-                <h3 className="text-xl font-bold mb-4 text-slate-900">{item.title}</h3>
-                <p className="text-slate-600 leading-relaxed">{item.desc}</p>
-              </div>
-            ))}
-          </div>
-        </div>
-      </section>
-
-      {/* Benefits Section */}
-      <section className="py-24 px-6 animate-fade-in-up">
-        <div className="max-w-6xl mx-auto">
-          <div className="text-center mb-16">
-            <h2 className="text-4xl font-black mb-6 text-slate-900 animate-bounce">
-              អត្ថប្រយោជន៍នៃការប្រើប្រាស់ DocuLink
-            </h2>
-          </div>
-
-          <div className="grid md:grid-cols-2 lg:grid-cols-3 gap-8">
-            {[
-              {
-                icon: FileText,
-                title: 'ចែករំលែកឯកសារ',
-                items: ['ផ្ទុកឯកសារឡើងដោយឥតគិតថ្លៃ', 'ចែករំលែកទៅកាន់និស្សិតផ្សេងទៀត', 'ឯកសារជាច្រើនប្រភេទ']
-              },
-              {
-                icon: Search,
-                title: 'ស្វែងរកងាយស្រួល',
-                items: ['ប្រព័ន្ធស្វែងរកឆ្លាតវៃ', 'តម្រងតាមប្រភេទឯកសារ', 'រកឃើញឯកសារដែលចង់បានរហ័ស']
-              },
-              {
-                icon: Users,
-                title: 'សហគមន៍និស្សិត',
-                items: ['ភ្ជាប់និស្សិតទាំងអស់គ្នា', 'ចែករំលែកចំណេះដឹង', 'រៀនសូត្រពីគ្នាទៅវិញទៅមក']
-              },
-              {
-                icon: Shield,
-                title: 'សុវត្ថិភាព',
-                items: ['ការពារឯកសាររបស់អ្នក', 'ភាពឯកជនភាពខ្ពស់', 'ចូលប្រើបានពីគ្រប់ទីកន្លែង']
-              },
-              {
-                icon: Download,
-                title: 'ទាញយកដោយឥតគិតថ្លៃ',
-                items: ['ទាញយកឯកសារដោយឥតគិតថ្លៃ', 'គ្មានកំណត់ចំនួន', 'រក្សាទុកក្នុងឧបករណ៍របស់អ្នក']
-              }
-            ].map((benefit, index) => (
-              <div key={index} className="bg-white p-8 rounded-xl shadow-lg hover:shadow-2xl transition-all duration-500 hover:scale-105 hover:rotate-1 animate-fade-in-up border border-gray-100" style={{animationDelay: `${index * 0.1}s`}}>
-                <div className="w-16 h-16 bg-indigo-100 rounded-lg flex items-center justify-center text-indigo-600 mb-6 animate-pulse">
-                  <benefit.icon size={32} className="animate-bounce" />
-                </div>
-                <h3 className="text-xl font-bold mb-6 text-slate-900">{benefit.title}</h3>
-                <ul className="space-y-3">
-                  {benefit.items.map((item, i) => (
-                    <li key={i} className="flex items-center gap-3 text-slate-600 animate-fade-in-up" style={{animationDelay: `${(index * 0.1) + (i * 0.05)}s`}}>
-                      <div className="w-2 h-2 rounded-full bg-indigo-500 flex-shrink-0 animate-ping" />
-                      {item}
-                    </li>
-                  ))}
-                </ul>
-              </div>
-            ))}
-          </div>
-        </div>
-      </section>
-
-      {/* Impact Stats Section */}
-      <section className="py-24 px-6 bg-slate-900 text-white animate-fade-in-up">
-        <div className="max-w-6xl mx-auto">
-          <div className="text-center mb-16">
-            <h2 className="text-4xl font-black mb-6 animate-bounce">
-              ផលប៉ះពាល់របស់ DocuLink
-            </h2>
-            <p className="text-xl opacity-90 max-w-3xl mx-auto animate-pulse">
-              តួលេខដែលនិយាយពីការប្តេជ្ញាចិត្តរបស់យើងក្នុងការចែករំលែកចំណេះដឹង
-            </p>
-          </div>
-
-          <div className="grid grid-cols-2 md:grid-cols-4 gap-8">
-            {[
-              { number: '10K+', label: 'ឯកសារចែករំលែក', icon: FileText },
-              { number: '5K+', label: 'និស្សិតសកម្ម', icon: Users },
-              { number: '50+', label: 'ប្រភេទឯកសារ', icon: BookOpen },
-              { number: '24/7', label: 'ការប្រើប្រាស់', icon: Shield }
-            ].map((stat, index) => (
-              <div key={index} className="text-center animate-fade-in-up" style={{animationDelay: `${index * 0.2}s`}}>
-                <div className="bg-slate-800 p-8 rounded-xl hover:scale-110 transition-all duration-500 animate-pulse border border-slate-700">
-                  <stat.icon size={48} className="text-indigo-400 mx-auto mb-4 animate-bounce" />
-                  <div className="text-4xl font-black mb-2 animate-pulse">{stat.number}</div>
-                  <div className="text-lg opacity-90">{stat.label}</div>
-                </div>
-              </div>
-            ))}
           </div>
         </div>
       </section>
@@ -455,117 +548,158 @@ export default function Homepage() {
         </div>
       </section>
 
-      {/* FAQ Section */}
-      <section className="py-24 px-6 bg-white">
-        <div className="max-w-4xl mx-auto">
-          <div className="text-center mb-16">
-            <h2 className="text-4xl font-bold mb-6 text-slate-900">
-              សំណួរញឹកញាប់ (FAQ)
-            </h2>
-            <p className="text-lg text-slate-600">
-              ស្វែងរកចម្លើយសម្រាប់សំណួរដែលអ្នកប្រើប្រាស់តែងតែសួរ
-            </p>
-          </div>
 
-          <div className="space-y-6">
-            {[
-              {
-                q: 'តើ DocuLink គឺជាវេទិកាដោយឥតគិតថ្លៃទេ?',
-                a: 'បាទ! DocuLink ជាវេទិកាដោយឥតគិតថ្លៃទាំងស្រុង។ អ្នកអាចផ្ទុកឯកសារឡើង ទាញយកឯកសារ និងចែករំលែកចំណេះដឹងដោយឥតគិតថ្លៃ។'
-              },
-              {
-                q: 'តើខ្ញុំអាចផ្ទុកឯកសារប្រភេទអ្វីខ្លះ?',
-                a: 'អ្នកអាចផ្ទុកឯកសារប្រភេទ PDF, DOC, DOCX, PPT, PPTX, XLS, XLSX, រូបភាព និងឯកសារផ្សេងទៀតដែលទាក់ទងនឹងការសិក្សា។'
-              },
-              {
-                q: 'តើឯកសាររបស់ខ្ញុំមានសុវត្ថិភាពទេ?',
-                a: 'បាទ! យើងយកចិត្តទុកដាក់ខ្ពស់ចំពោះសុវត្ថិភាពឯកសារ។ ឯកសារទាំងអស់ត្រូវបានធានាសុវត្ថិភាព និងភាពឯកជនភាព។'
-              },
-              {
-                q: 'តើខ្ញុំអាចចែករំលែកឯកសាររបស់ខ្ញុំទៅកាន់និស្សិតផ្សេងទេ?',
-                a: 'បាទ! វាជាគោលបំណងចម្បងរបស់វេទិការបស់យើង។ អ្នកអាចចែករំលែកឯកសាររបស់អ្នកទៅកាន់និស្សិតផ្សេងទៀតដោយងាយស្រួល។'
-              },
-              {
-                q: 'តើមានកំណត់ចំនួនឯកសារដែលខ្ញុំអាចផ្ទុកឡើងបានទេ?',
-                a: 'បច្ចុប្បន្នយើងមិនមានកំណត់ចំនួនឯកសារទេ។ អ្នកអាចផ្ទុកឯកសារចំនួនប៉ុន្មានក៏បានដែលចង់បាន។'
-              }
-            ].map((faq, index) => (
-              <div key={index} className="bg-white border border-gray-200 rounded-lg shadow-sm hover:shadow-md transition duration-300 border-l-4 border-l-indigo-500">
-                <div className="p-6">
-                  <h3 className="text-lg font-semibold mb-3 text-slate-900 flex items-center gap-3">
-                    <span className="text-indigo-600 text-2xl">•</span>
-                    {faq.q}
-                  </h3>
-                  <p className="text-slate-600 leading-relaxed">{faq.a}</p>
+
+      
+      {/* Main CTA — Enhanced with Professional Phone Design */}
+      <section className="py-24 px-6 bg-gradient-to-r from-blue-500 via-purple-500 to-purple-600 text-white overflow-hidden">
+        <div className="max-w-7xl mx-auto">
+          <div className="grid md:grid-cols-2 gap-16 items-center">
+            
+            {/* Left Section */}
+            <div>
+              {/* Badge */}
+              <div className="inline-flex items-center gap-2 bg-white/20 backdrop-blur-md px-4 py-2 rounded-full border border-white/30 mb-8">
+                <Star size={18} className="text-yellow-300 fill-yellow-300" />
+                <span className="text-white font-bold text-sm">⭐ ចូលរួមឥឡូវនេះ</span>
+              </div>
+
+              {/* Heading */}
+              <h2 className="text-5xl md:text-6xl font-black mb-8 leading-tight">
+                តោះ! <span className="text-yellow-300">ចូលរួម</span><br />ជាមួយយើង
+              </h2>
+
+              {/* Description */}
+              <p className="text-white/95 text-lg leading-relaxed mb-10">
+                ការចែករំលែកឯកសារ និងចំណេះដឹងធ្វើឱ្យសហគមន៍និស្សិតកាន់តែរឹងមាំ។ ដោយផ្តល់ជូនឯកសាររបស់អ្នក អ្នកក្លាយជាផ្នែកមួយនៃចលនាអប់រំដ៏អស្ចារ្យមួយ ដែលផ្តល់ឱកាសដល់និស្សិតទូទាំងប្រទេស។
+              </p>
+
+              {/* Feature Checklist */}
+              <div className="space-y-4 mb-12">
+                <div className="flex items-center gap-4">
+                  <div className="w-6 h-6 rounded-full bg-green-400 flex items-center justify-center flex-shrink-0">
+                    <CheckCircle size={20} className="text-white" />
+                  </div>
+                  <span className="text-white font-medium text-lg">បង្រួមឯកសារបង្រៀនរបស់អ្នក</span>
+                </div>
+                <div className="flex items-center gap-4">
+                  <div className="w-6 h-6 rounded-full bg-green-400 flex items-center justify-center flex-shrink-0">
+                    <CheckCircle size={20} className="text-white" />
+                  </div>
+                  <span className="text-white font-medium text-lg">ចូលរួមនឹងសហគមន៍ 650+ នាក់</span>
+                </div>
+                <div className="flex items-center gap-4">
+                  <div className="w-6 h-6 rounded-full bg-green-400 flex items-center justify-center flex-shrink-0">
+                    <CheckCircle size={20} className="text-white" />
+                  </div>
+                  <span className="text-white font-medium text-lg">ជួយសិស្សក្នុងការរៀន និងស្រាវជ្រាវ</span>
                 </div>
               </div>
-            ))}
-          </div>
 
-          <div className="text-center mt-12">
-            <p className="text-slate-600 mb-6">មានសំណួរទៀតទេ? <a href="#" className="text-indigo-600 hover:text-indigo-700 font-semibold transition duration-300">ទាក់ទងយើងខ្ញុំ</a></p>
-            <button className="bg-indigo-600 text-white px-8 py-4 rounded-lg font-bold hover:bg-indigo-700 transition duration-300">
-              ចាប់ផ្តើមថ្ងៃនេះ
-            </button>
-          </div>
-        </div>
-      </section>
+              {/* CTA Button */}
+              <Link 
+                href="/upload" 
+                className="inline-flex items-center gap-3 bg-white text-purple-600 px-10 py-5 rounded-full font-bold text-lg shadow-2xl transition-all duration-300 hover:scale-110 hover:shadow-3xl hover:bg-yellow-300"
+              >
+                <Upload size={24} />
+                <span>បង្រួមឯកសារឥឡូវនេះ</span>
+                <ArrowRight size={24} />
+              </Link>
+            </div>
 
-      {/* CTA Section */}
-      <section className="py-24 px-6 bg-gradient-to-r from-indigo-600 to-indigo-700 text-white">
-        <div className="max-w-4xl mx-auto text-center">
-          <h2 className="text-4xl font-bold mb-6">
-            ចូលរួមចែករំលែកឯកសារថ្ងៃនេះ
-          </h2>
-          <p className="text-lg mb-12 opacity-95 leading-relaxed">
-            សូមរស់នៅក្នុង DocuLink ដែលមាន​សហគមន៍ពិតប្រាកដរបស់និស្សិត
-            ដែលគ្រាន់តែសង្ឃឹមថាផ្លាស់ប្តូរឯកសាររបស់ពួកគេតាមរយៈការចែករំលែក។ 
-            ឈានទៅលើផ្ទះលម្អិតនៃការរៀនសូត្ របស់ពួកគេ។
-          </p>
+            {/* Right Section - Professional Phone Mockup */}
+            <div className="relative h-[600px]">
+              {/* Outer glow */}
+              <div className="absolute inset-0 bg-gradient-to-b from-cyan-200/30 to-pink-200/30 rounded-full blur-3xl transform translate-y-12" />
+              
+              {/* Phone Container */}
+              <div className="relative h-full mx-auto max-w-xs">
+                {/* Outer bezel/frame */}
+                <div className="absolute inset-0 bg-gradient-to-br from-slate-900 to-slate-800 rounded-[50px] p-3 shadow-2xl">
+                  
+                  {/* Inner screen area */}
+                  <div className="w-full h-full bg-slate-900 rounded-[45px] p-2 flex flex-col overflow-hidden">
+                    
+                    {/* Status Bar */}
+                    <div className="bg-slate-900 px-6 py-3 flex justify-between items-center text-white text-xs font-semibold">
+                      <span>1:32 PM</span>
+                      <div className="flex gap-1">
+                        <span>📶</span>
+                        <span>📡</span>
+                        <span>🔋</span>
+                      </div>
+                    </div>
 
-          <div className="flex flex-col sm:flex-row gap-8 justify-center mb-12 text-left">
-            <div className="flex items-start gap-4 flex-1">
-              <div className="flex-shrink-0">
-                <CheckCircle size={24} className="text-green-300 mt-1" />
-              </div>
-              <div>
-                <h4 className="font-semibold mb-2">ផ្ទុកឯកសារដោយឥតគិតថ្លៃ</h4>
-                <p className="text-sm opacity-90">ផ្ទុកឯកសារប្រភេទផ្សេងៗដោយមិនមានបញ្ហា</p>
+                    {/* Screen Content */}
+                    <div className="flex-1 bg-gradient-to-b from-blue-50 to-purple-50 rounded-[40px] overflow-hidden flex flex-col p-6">
+                      
+                      {/* Header Tab */}
+                      <div className="bg-white/80 backdrop-blur-sm rounded-2xl p-4 mb-6 shadow-sm">
+                        <div className="flex items-center gap-3 mb-3">
+                          <div className="w-12 h-12 rounded-full bg-gradient-to-br from-blue-500 to-purple-500 flex items-center justify-center text-white font-bold shadow-lg">
+                            👥
+                          </div>
+                          <div className="flex-1">
+                            <p className="font-bold text-slate-900 text-base">650+</p>
+                            <p className="text-xs text-slate-500 font-medium">អ្នកប្រើប្រាស់សកម្ម</p>
+                          </div>
+                          <div className="w-10 h-10 bg-gradient-to-br from-blue-400 to-blue-500 rounded-lg flex items-center justify-center text-white">
+                            🔔
+                          </div>
+                        </div>
+                      </div>
+
+                      {/* Main Document Card */}
+                      <div className="flex-1 bg-white rounded-3xl p-8 shadow-lg border-2 border-blue-100 flex flex-col items-center justify-center space-y-4">
+                        <div className="w-20 h-20 bg-gradient-to-br from-purple-400 via-blue-400 to-cyan-400 rounded-2xl flex items-center justify-center text-4xl shadow-lg transform hover:scale-110 transition-transform">
+                          📚
+                        </div>
+                        <h3 className="font-black text-slate-900 text-center text-lg">
+                          ឯកសារថ្មីៗ
+                        </h3>
+                        <p className="text-xs text-slate-500 text-center leading-relaxed max-w-xs">
+                          ឯកសារសិក្សា ឯកសារគ្រូបង្រៀន និងឯកសារស្រាវជ្រាវដ៏វិស័យ
+                        </p>
+                        <button className="mt-auto w-full bg-gradient-to-r from-blue-500 to-purple-500 text-white font-bold py-3 rounded-2xl hover:shadow-lg transition-all">
+                          មើលលម្អិត
+                        </button>
+                      </div>
+
+                      {/* Footer Stats */}
+                      <div className="mt-6 flex gap-3">
+                        <div className="flex-1 bg-white/70 backdrop-blur-sm rounded-xl p-3 text-center shadow-sm">
+                          <p className="text-xs text-slate-500 font-semibold">ឯកសារ</p>
+                          <p className="font-bold text-slate-900 text-lg">1200+</p>
+                        </div>
+                        <div className="flex-1 bg-white/70 backdrop-blur-sm rounded-xl p-3 text-center shadow-sm">
+                          <p className="text-xs text-slate-500 font-semibold">ចូលចិត្ត</p>
+                          <p className="font-bold text-slate-900 text-lg">125+</p>
+                        </div>
+                      </div>
+                    </div>
+                  </div>
+                </div>
+
+                {/* Social Proof Badge - Bottom Left */}
+                <div className="absolute -bottom-10 left-4 bg-white/95 backdrop-blur-md px-5 py-3 rounded-full shadow-xl border border-white/50 flex items-center gap-3 z-10">
+                  <div className="flex -space-x-2">
+                    {['👨', '👩', '👦'].map((emoji, i) => (
+                      <div key={i} className="w-8 h-8 rounded-full bg-gradient-to-br from-blue-400 to-purple-500 border-2 border-white flex items-center justify-center text-sm">
+                        {emoji}
+                      </div>
+                    ))}
+                  </div>
+                  <span className="text-slate-900 font-bold text-sm">+650</span>
+                </div>
+
+                {/* Likes Badge - Bottom Right */}
+                <div className="absolute -bottom-10 right-4 bg-white/95 backdrop-blur-md px-5 py-3 rounded-full shadow-xl border border-white/50 flex items-center gap-2 z-10">
+                  <Heart size={20} className="text-red-500 fill-red-500" />
+                  <span className="text-slate-900 font-bold">125+</span>
+                </div>
               </div>
             </div>
-            <div className="flex items-start gap-4 flex-1">
-              <div className="flex-shrink-0">
-                <CheckCircle size={24} className="text-green-300 mt-1" />
-              </div>
-              <div>
-                <h4 className="font-semibold mb-2">ស្វែងរកឯកសារងាយស្រួល</h4>
-                <p className="text-sm opacity-90">រកឃើញឯកសារដែលអ្នកស្វាគមន៍</p>
-              </div>
-            </div>
-            <div className="flex items-start gap-4 flex-1">
-              <div className="flex-shrink-0">
-                <CheckCircle size={24} className="text-green-300 mt-1" />
-              </div>
-              <div>
-                <h4 className="font-semibold mb-2">សហគមន៍ដ៏រឹងមាំ</h4>
-                <p className="text-sm opacity-90">ភ្ជាប់ជាមួយនិស្សិតដែលមានគំនិតដូចគ្នា</p>
-              </div>
-            </div>
-          </div>
 
-          <div className="flex flex-col sm:flex-row gap-4 justify-center">
-            <button className="bg-white text-indigo-600 px-10 py-3 rounded-lg font-bold hover:bg-gray-50 transition duration-300 flex items-center justify-center gap-2">
-              <Upload size={20} />
-              ផ្ទុកឯកសារឡើង
-            </button>
-            <button className="border-2 border-white text-white px-10 py-3 rounded-lg font-bold hover:bg-white/10 transition duration-300 flex items-center justify-center gap-2">
-              <Users size={20} />
-              ចូលរួមសហគមន៍
-            </button>
-          </div>
-
-          <div className="mt-12 text-center">
-            <p className="text-sm opacity-90">សកម្ម 10,000+ ឯកសារ | និស្សិត 5,000+ នាក់</p>
           </div>
         </div>
       </section>
