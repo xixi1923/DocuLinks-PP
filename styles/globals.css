@@ -205,7 +205,8 @@ body { @apply bg-white text-slate-900; }
 
 /* Hero decorative blobs */
 .hero-blob-1,
-.hero-blob-2 {
+.hero-blob-2,
+.hero-blob-3 {
   position: absolute;
   width: 520px;
   height: 420px;
@@ -226,12 +227,21 @@ body { @apply bg-white text-slate-900; }
   background: linear-gradient(135deg, rgba(239,68,68,0.85), rgba(249,115,22,0.75));
   animation: float 7s ease-in-out infinite reverse, gradient-x 6s ease infinite;
 }
+.hero-blob-3 {
+  left: 50%;
+  top: 50%;
+  width: 300px;
+  height: 300px;
+  background: linear-gradient(135deg, rgba(168,85,247,0.7), rgba(236,72,153,0.6));
+  animation: float 8s ease-in-out infinite, gradient-x 7s ease infinite;
+  transform: translate3d(-50%, -50%, 0);
+}
 
 .hero-graphic { position: relative; }
 
 /* Responsive tweaks */
 @media (max-width: 768px) {
-  .hero-blob-1, .hero-blob-2 {
+  .hero-blob-1, .hero-blob-2, .hero-blob-3 {
     width: 320px;
     height: 260px;
     filter: blur(48px);
@@ -243,7 +253,7 @@ body { @apply bg-white text-slate-900; }
 }
 
 @media (min-width: 1200px) {
-  .hero-blob-1, .hero-blob-2 { width: 720px; height: 560px; filter: blur(84px); }
+  .hero-blob-1, .hero-blob-2, .hero-blob-3 { width: 720px; height: 560px; filter: blur(84px); }
 }
 
 /* Document card visual helpers inside hero */
@@ -256,7 +266,7 @@ body { @apply bg-white text-slate-900; }
 
 /* Prefer reduced motion */
 @media (prefers-reduced-motion: reduce) {
-  .animate-float, .animate-spin-slow, .animate-gradient-x, .hero-blob-1, .hero-blob-2 {
+  .animate-float, .animate-spin-slow, .animate-gradient-x, .hero-blob-1, .hero-blob-2, .hero-blob-3 {
     animation: none !important;
     transition: none !important;
   }

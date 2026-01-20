@@ -1,315 +1,221 @@
 'use client'
+
+import React, { useState, useEffect } from 'react'
 import { useLanguage } from '@/contexts/LanguageContext'
-import { useTheme } from '@/contexts/ThemeContext'
-import { Mail, Phone, MapPin, Send, Loader, Clock, Facebook, Twitter, Linkedin, Instagram } from 'lucide-react'
-import { useState } from 'react'
+import { useTheme } from 'next-themes'
+import {
+  Mail, Phone, MapPin, Clock, Send, X, Loader,
+  Facebook, Twitter, Linkedin, Instagram
+} from 'lucide-react'
+
+const CONTACT = {
+  address: 'ផ្លូវលេខ២១០A សង្កាត់ទឹកល្អក់ ខណ្ឌទួលគោក ភ្នំពេញ',
+  phone: '+855 086 280 862',
+  email: 'doculink@gmail.com',
+  hours: 'ច័ន្ទ - សុក្រ · 7:00AM – 5:00PM'
+}
 
 export default function ContactPage() {
   const { language } = useLanguage()
   const { theme } = useTheme()
-  const [formData, setFormData] = useState({
-    name: '',
-    lastName: '',
-    email: '',
-    phone: '',
-    message: ''
-  })
-  const [isLoading, setIsLoading] = useState(false)
-  const [submitted, setSubmitted] = useState(false)
+  const currentTheme = theme || 'dark' // Fixes TypeScript 'undefined' error
+  const [isVisible, setIsVisible] = useState(false)
 
-  const handleChange = (e: any) => {
+  const [form, setForm] = useState({
+    firstName: '', lastName: '', email: '', phone: '', message: ''
+  })
+  const [loading, setLoading] = useState(false)
+
+  useEffect(() => {
+    setIsVisible(true) // Trigger entrance animations
+  }, [])
+
+  const handleChange = (e: React.ChangeEvent<HTMLInputElement | HTMLTextAreaElement>) => {
     const { name, value } = e.target
-    setFormData(prev => ({ ...prev, [name]: value }))
+    setForm(prev => ({ ...prev, [name]: value }))
   }
 
-  const handleSubmit = async (e: any) => {
-    e.preventDefault()
-    setIsLoading(true)
-    try {
-      await new Promise(resolve => setTimeout(resolve, 1000))
-      setSubmitted(true)
-      setFormData({ name: '', lastName: '', email: '', phone: '', message: '' })
-      setTimeout(() => setSubmitted(false), 3000)
-    } finally {
-      setIsLoading(false)
-    }
+  const handleCancel = () => {
+    setForm({ firstName: '', lastName: '', email: '', phone: '', message: '' })
   }
 
   return (
-    <main className={`min-h-screen transition-colors duration-300 ${theme === 'dark' ? 'bg-slate-950' : 'bg-white'}`}>
-      {/* Header Section */}
-      <div className={`pt-28 pb-16 px-6 text-center transition-colors duration-300 ${theme === 'dark' ? 'bg-gradient-to-b from-slate-900 to-slate-950' : 'bg-gradient-to-b from-slate-50 to-white'}`}>
-        <h1 className={`text-4xl md:text-5xl font-bold mb-6 transition-colors duration-300 ${theme === 'dark' ? 'text-white' : 'text-slate-900'}`}>
-          {language === 'km' ? 'ទំនាក់ទំនងនៅទីនេះ!' : 'Contact Us Here!'}
+    <main className={`min-h-screen flex flex-col transition-all duration-500 ${currentTheme === 'dark' ? 'bg-gradient-to-br from-[#0f172a] to-[#1e293b] text-slate-200' : 'bg-gradient-to-br from-slate-50 to-blue-50 text-slate-900'}`}>
+      
+      {/* HEADER SECTION */}
+      <section className={`pt-24 pb-12 text-center transition-all duration-1000 transform ${isVisible ? 'opacity-100 translate-y-0' : 'opacity-0 -translate-y-4'}`}>
+        <h1 className="text-4xl md:text-5xl font-black mb-3 tracking-tight bg-gradient-to-r from-blue-500 to-indigo-400 bg-clip-text text-transparent">
+          {language === 'km' ? 'ទំនាក់ទំនងមកយើង' : 'Contact Us'}
         </h1>
-        <p className={`max-w-3xl mx-auto px-6 leading-relaxed transition-colors duration-300 ${theme === 'dark' ? 'text-slate-400' : 'text-slate-600'}`}>
-          {language === 'km' 
-            ? 'យើងនៅទីនេះដើម្បីជួយអ្នក។ ទាក់ទងមកយើងសម្រាប់សំណួរ ការជួយ ឬព័ត៌មានបន្ថែម។ សូមធ្វើការបំពេញព័ត៌មានរបស់លោកអ្នក ឬ ទំនាក់ទំនងតាមលេខទូរស័ព្ទខាងក្រោម ដើម្បីធ្វើការទំនាក់ទំនងមកកាន់ពួកយើង។'
-            : 'We are here to help. Contact us for questions, support, or more information. Please fill out your details or contact us via the phone number below.'}
+        <p className="text-slate-500 dark:text-slate-400 text-sm font-medium">
+          {language === 'km' ? 'សូមទាក់ទងមកយើង ប្រសិនបើអ្នកមានសំណួរ' : 'Get in touch with us for any questions or support'}
         </p>
-      </div>
+      </section>
 
-      {/* Main Contact Section */}
-      <section className={`py-24 px-6 transition-colors duration-300 ${theme === 'dark' ? 'bg-slate-950' : 'bg-white'}`}>
-        <div className="max-w-7xl mx-auto grid md:grid-cols-12 gap-12 items-start">
-          
-          {/* LEFT SIDE: Contact Information Cards - Professional Style */}
-          <div className="md:col-span-5 space-y-5">
-            {/* Contact Info Card 1 - Address */}
-            <div className={`group p-8 rounded-2xl shadow-lg hover:shadow-2xl transition-all duration-300 border backdrop-blur-sm overflow-hidden relative ${theme === 'dark' ? 'bg-slate-800/80 border-slate-700 hover:border-blue-500/50' : 'bg-white border-slate-100 hover:border-blue-500/50'}`}>
-              <div className="absolute -right-8 -top-8 w-32 h-32 bg-blue-500/10 rounded-full group-hover:scale-150 transition-transform duration-500" />
-              <div className={`w-14 h-14 rounded-2xl flex items-center justify-center mb-4 transition-all duration-300 ${theme === 'dark' ? 'bg-blue-500/20 text-blue-400 group-hover:bg-blue-500/40 group-hover:scale-110' : 'bg-blue-100 text-blue-600 group-hover:bg-blue-200 group-hover:scale-110'}`}>
-                <MapPin size={28} />
+      {/* MAIN CONTENT AREA */}
+      <section className="flex-grow px-6 pb-20">
+        <div className="max-w-5xl mx-auto grid lg:grid-cols-12 gap-10">
+
+          {/* LEFT: COMPACT INFO FRAME (MATCHES IMAGE 2/3) */}
+          <aside className={`lg:col-span-5 space-y-6 transition-all duration-700 delay-300 transform ${isVisible ? 'opacity-100 translate-x-0' : 'opacity-0 -translate-x-8'}`}>
+            <div className={`p-8 rounded-3xl border shadow-xl ${currentTheme === 'dark' ? 'bg-[#1e293b] border-slate-800' : 'bg-white border-slate-100'}`}>
+              <div className="space-y-8">
+                <InfoItem icon={<MapPin size={20}/>} label="LOCATION" value={CONTACT.address} />
+                <hr className="border-slate-100 dark:border-slate-800" />
+                <InfoItem icon={<Phone size={20}/>} label="PHONE" value={CONTACT.phone} />
+                <hr className="border-slate-100 dark:border-slate-800" />
+                <InfoItem icon={<Mail size={20}/>} label="EMAIL" value={CONTACT.email} />
+                <hr className="border-slate-100 dark:border-slate-800" />
+                <InfoItem icon={<Clock size={20}/>} label="HOURS" value={CONTACT.hours} />
               </div>
-              <h3 className={`text-lg font-bold mb-2 transition-colors duration-300 relative z-10 ${theme === 'dark' ? 'text-white' : 'text-slate-900'}`}>{language === 'km' ? 'អាសយដ្ឋាន' : 'Address'}</h3>
-              <p className={`transition-colors duration-300 relative z-10 ${theme === 'dark' ? 'text-slate-400' : 'text-slate-600'}`}>ផ្លូវលេខ២១០A សង្កាត់ទឹកល្អក់ ខណ្ឌទួលគោក ភ្នំពេញ</p>
             </div>
 
-            {/* Contact Info Card 2 - Phone */}
-            <div className={`group p-8 rounded-2xl shadow-lg hover:shadow-2xl transition-all duration-300 border backdrop-blur-sm overflow-hidden relative ${theme === 'dark' ? 'bg-slate-800/80 border-slate-700 hover:border-emerald-500/50' : 'bg-white border-slate-100 hover:border-emerald-500/50'}`}>
-              <div className="absolute -right-8 -top-8 w-32 h-32 bg-emerald-500/10 rounded-full group-hover:scale-150 transition-transform duration-500" />
-              <div className={`w-14 h-14 rounded-2xl flex items-center justify-center mb-4 transition-all duration-300 relative z-10 ${theme === 'dark' ? 'bg-emerald-500/20 text-emerald-400 group-hover:bg-emerald-500/40 group-hover:scale-110' : 'bg-emerald-100 text-emerald-600 group-hover:bg-emerald-200 group-hover:scale-110'}`}>
-                <Phone size={28} />
-              </div>
-              <h3 className={`text-lg font-bold mb-2 transition-colors duration-300 relative z-10 ${theme === 'dark' ? 'text-white' : 'text-slate-900'}`}>{language === 'km' ? 'ទូរស័ព្ទទំនាក់ទំនង' : 'Contact Phone'}</h3>
-              <p className={`transition-colors duration-300 relative z-10 ${theme === 'dark' ? 'text-slate-400' : 'text-slate-600'}`}>+855 086 280 862</p>
-            </div>
-
-            {/* Contact Info Card 3 - Email */}
-            <div className={`group p-8 rounded-2xl shadow-lg hover:shadow-2xl transition-all duration-300 border backdrop-blur-sm overflow-hidden relative ${theme === 'dark' ? 'bg-slate-800/80 border-slate-700 hover:border-purple-500/50' : 'bg-white border-slate-100 hover:border-purple-500/50'}`}>
-              <div className="absolute -right-8 -top-8 w-32 h-32 bg-purple-500/10 rounded-full group-hover:scale-150 transition-transform duration-500" />
-              <div className={`w-14 h-14 rounded-2xl flex items-center justify-center mb-4 transition-all duration-300 relative z-10 ${theme === 'dark' ? 'bg-purple-500/20 text-purple-400 group-hover:bg-purple-500/40 group-hover:scale-110' : 'bg-purple-100 text-purple-600 group-hover:bg-purple-200 group-hover:scale-110'}`}>
-                <Mail size={28} />
-              </div>
-              <h3 className={`text-lg font-bold mb-2 transition-colors duration-300 relative z-10 ${theme === 'dark' ? 'text-white' : 'text-slate-900'}`}>{language === 'km' ? 'អ៊ីមែល' : 'Email'}</h3>
-              <p className={`transition-colors duration-300 relative z-10 ${theme === 'dark' ? 'text-slate-400' : 'text-slate-600'}`}>doculink@gmail.com</p>
-            </div>
-
-            {/* Contact Info Card 4 - Hours */}
-            <div className={`group p-8 rounded-2xl shadow-lg hover:shadow-2xl transition-all duration-300 border backdrop-blur-sm overflow-hidden relative ${theme === 'dark' ? 'bg-slate-800/80 border-slate-700 hover:border-orange-500/50' : 'bg-white border-slate-100 hover:border-orange-500/50'}`}>
-              <div className="absolute -right-8 -top-8 w-32 h-32 bg-orange-500/10 rounded-full group-hover:scale-150 transition-transform duration-500" />
-              <div className={`w-14 h-14 rounded-2xl flex items-center justify-center mb-4 transition-all duration-300 relative z-10 ${theme === 'dark' ? 'bg-orange-500/20 text-orange-400 group-hover:bg-orange-500/40 group-hover:scale-110' : 'bg-orange-100 text-orange-600 group-hover:bg-orange-200 group-hover:scale-110'}`}>
-                <Clock size={28} />
-              </div>
-              <h3 className={`text-lg font-bold mb-2 transition-colors duration-300 relative z-10 ${theme === 'dark' ? 'text-white' : 'text-slate-900'}`}>{language === 'km' ? 'ម៉ោងធ្វើការ' : 'Working Hours'}</h3>
-              <p className={`transition-colors duration-300 relative z-10 ${theme === 'dark' ? 'text-slate-400' : 'text-slate-600'}`}>ច័ន្ទ - សុក្រ ម៉ោង ៧:០០ - ៥:០០</p>
-            </div>
-
-            {/* Google Map */}
-            <div className={`w-full h-64 rounded-2xl overflow-hidden shadow-lg border transition-colors duration-300 ${theme === 'dark' ? 'border-slate-700' : 'border-slate-100'}`}>
+            {/* MAP COMPONENT */}
+            <div className="rounded-3xl overflow-hidden border border-slate-200 dark:border-slate-800 h-64 shadow-lg grayscale-[0.3] hover:grayscale-0 transition-all duration-500">
               <iframe
-                width="100%"
-                height="100%"
-                style={{ border: 0 }}
-                src="https://www.google.com/maps/embed?pb=!1m18!1m12!1m3!1d3908.770663446347!2d104.899212!3d11.568291!2m3!1f0!2f0!3f0!3m2!1i1024!2i768!4f13.1!3m3!1m2!1s0x3a027633503d2e15%3A0xc3c9a632e8f176e5!2sRoyal%20University%20of%20Phnom%20Penh!5e0!3m2!1sen!2skh!4v1700000000000"
-                allowFullScreen
+                title="map"
+                className="w-full h-full"
+                src="https://www.google.com/maps/embed?pb=!1m14!1m12!1m3!1d3908.7706124621143!2d104.9015024!3d11.5683017!2m3!1f0!2f0!3f0!3m2!1i1024!2i768!4f13.1!5e0!3m2!1sen!2skh!4v1700000000000"
                 loading="lazy"
-              ></iframe>
+                style={{ border: 0 }}
+              />
             </div>
-          </div>
+          </aside>
 
-          {/* RIGHT SIDE: Professional Contact Form */}
-          <div className={`md:col-span-7 p-10 rounded-3xl shadow-2xl border backdrop-blur-md transition-all duration-300 ${theme === 'dark' ? 'bg-slate-800/90 border-slate-700' : 'bg-gradient-to-br from-white via-slate-50 to-white border-slate-200'}`}>
-            {/* Form Header */}
-            <div className="mb-8">
-              <h3 className={`text-2xl md:text-3xl font-bold mb-3 transition-colors duration-300 ${theme === 'dark' ? 'text-white' : 'text-slate-900'}`}>
-                {language === 'km' ? 'ផ្ញើសារមកយើង' : 'Send us a Message'}
-              </h3>
-              <div className={`h-1 w-12 bg-gradient-to-r from-blue-500 to-purple-500 rounded-full mb-4`} />
-              <p className={`transition-colors duration-300 ${theme === 'dark' ? 'text-slate-400' : 'text-slate-600'}`}>
-                {language === 'km' ? 'សូមបំពេញទម្រង់ខាងក្រោម ហើយយើងនឹងឆ្លើយឆ្លងទៅលោកអ្នក។' : 'Fill in the form below and we will get back to you.'}
-              </p>
+          {/* RIGHT: PROFESSIONAL FORM FRAME (MATCHES IMAGE 2/3/9) */}
+          <div className={`lg:col-span-7 p-10 rounded-3xl border transition-all duration-700 delay-500 transform ${isVisible ? 'opacity-100 translate-x-0' : 'opacity-0 translate-x-8'} ${
+            currentTheme === 'dark' ? 'bg-[#1e293b]/50 border-slate-800' : 'bg-white border-slate-200 shadow-2xl shadow-slate-200/50'
+          }`}>
+            <div className="mb-10">
+              <h2 className="text-2xl font-bold mb-2 flex items-center gap-3">
+                <span className="w-1.5 h-8 bg-blue-600 rounded-full"></span>
+                {language === 'km' ? 'ផ្ញើសារមកយើង' : 'Send a Message'}
+              </h2>
+              <p className="text-xs text-slate-400 uppercase tracking-widest font-bold">We respond within 24 hours</p>
             </div>
 
-            <form onSubmit={handleSubmit} className="space-y-6">
-              {/* Name Row */}
-              <div className="grid grid-cols-2 gap-4">
-                <div>
-                  <label className={`block text-sm font-semibold mb-3 transition-colors duration-300 ${theme === 'dark' ? 'text-slate-300' : 'text-slate-700'}`}>
-                    {language === 'km' ? 'នាមត្រកូល' : 'Last Name'}
-                  </label>
-                  <input
-                    type="text"
-                    name="lastName"
-                    value={formData.lastName}
-                    onChange={handleChange}
-                    placeholder={language === 'km' ? 'នាមត្រកូលរបស់អ្នក' : 'Your last name'}
-                    className={`w-full px-5 py-3.5 rounded-xl border-2 font-medium focus:outline-none focus:ring-2 transition-all duration-300 ${theme === 'dark' ? 'bg-slate-700/50 border-slate-600 text-white placeholder-slate-500 focus:border-blue-500 focus:ring-blue-500/20' : 'bg-white border-slate-200 text-slate-900 placeholder-slate-400 focus:border-blue-500 focus:ring-blue-500/20'}`}
-                    required
-                  />
-                </div>
-                <div>
-                  <label className={`block text-sm font-semibold mb-3 transition-colors duration-300 ${theme === 'dark' ? 'text-slate-300' : 'text-slate-700'}`}>
-                    {language === 'km' ? 'នាមខ្លួន' : 'First Name'}
-                  </label>
-                  <input
-                    type="text"
-                    name="name"
-                    value={formData.name}
-                    onChange={handleChange}
-                    placeholder={language === 'km' ? 'នាមខ្លួនរបស់អ្នក' : 'Your first name'}
-                    className={`w-full px-5 py-3.5 rounded-xl border-2 font-medium focus:outline-none focus:ring-2 transition-all duration-300 ${theme === 'dark' ? 'bg-slate-700/50 border-slate-600 text-white placeholder-slate-500 focus:border-blue-500 focus:ring-blue-500/20' : 'bg-white border-slate-200 text-slate-900 placeholder-slate-400 focus:border-blue-500 focus:ring-blue-500/20'}`}
-                    required
-                  />
-                </div>
+            <form className="grid gap-6">
+              <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
+                <Input label={language === 'km' ? 'នាមត្រកូល' : 'Last Name'} name="lastName" value={form.lastName} onChange={handleChange} theme={currentTheme} />
+                <Input label={language === 'km' ? 'នាមខ្លួន' : 'First Name'} name="firstName" value={form.firstName} onChange={handleChange} theme={currentTheme} />
               </div>
+              <Input label={language === 'km' ? 'អ៊ីម៉ែល' : 'Email'} type="email" name="email" value={form.email} onChange={handleChange} theme={currentTheme} />
+              <Textarea label={language === 'km' ? 'ធ្វើការផ្ញើសារ...' : 'Message'} name="message" value={form.message} onChange={handleChange} theme={currentTheme} />
 
-              {/* Email */}
-              <div>
-                <label className={`block text-sm font-semibold mb-3 transition-colors duration-300 ${theme === 'dark' ? 'text-slate-300' : 'text-slate-700'}`}>
-                  {language === 'km' ? 'អ៊ីមែល' : 'Email Address'}
-                </label>
-                <input
-                  type="email"
-                  name="email"
-                  value={formData.email}
-                  onChange={handleChange}
-                  placeholder={language === 'km' ? 'example@gmail.com' : 'your@email.com'}
-                  className={`w-full px-5 py-3.5 rounded-xl border-2 font-medium focus:outline-none focus:ring-2 transition-all duration-300 ${theme === 'dark' ? 'bg-slate-700/50 border-slate-600 text-white placeholder-slate-500 focus:border-blue-500 focus:ring-blue-500/20' : 'bg-white border-slate-200 text-slate-900 placeholder-slate-400 focus:border-blue-500 focus:ring-blue-500/20'}`}
-                  required
-                />
-              </div>
-
-              {/* Phone */}
-              <div>
-                <label className={`block text-sm font-semibold mb-3 transition-colors duration-300 ${theme === 'dark' ? 'text-slate-300' : 'text-slate-700'}`}>
-                  {language === 'km' ? 'លេខទូរស័ព្ទ' : 'Phone Number'}
-                </label>
-                <input
-                  type="tel"
-                  name="phone"
-                  value={formData.phone}
-                  onChange={handleChange}
-                  placeholder={language === 'km' ? '+855 12 345 678' : '+855 12 345 678'}
-                  className={`w-full px-5 py-3.5 rounded-xl border-2 font-medium focus:outline-none focus:ring-2 transition-all duration-300 ${theme === 'dark' ? 'bg-slate-700/50 border-slate-600 text-white placeholder-slate-500 focus:border-blue-500 focus:ring-blue-500/20' : 'bg-white border-slate-200 text-slate-900 placeholder-slate-400 focus:border-blue-500 focus:ring-blue-500/20'}`}
-                  required
-                />
-              </div>
-
-              {/* Message */}
-              <div>
-                <label className={`block text-sm font-semibold mb-3 transition-colors duration-300 ${theme === 'dark' ? 'text-slate-300' : 'text-slate-700'}`}>
-                  {language === 'km' ? 'សារ' : 'Message'}
-                </label>
-                <textarea
-                  name="message"
-                  value={formData.message}
-                  onChange={handleChange}
-                  placeholder={language === 'km' ? 'សូមក្រុមក្រងសាររបស់លោកអ្នក...' : 'Your message...'}
-                  rows={5}
-                  className={`w-full px-5 py-3.5 rounded-xl border-2 font-medium focus:outline-none focus:ring-2 transition-all duration-300 resize-none ${theme === 'dark' ? 'bg-slate-700/50 border-slate-600 text-white placeholder-slate-500 focus:border-blue-500 focus:ring-blue-500/20' : 'bg-white border-slate-200 text-slate-900 placeholder-slate-400 focus:border-blue-500 focus:ring-blue-500/20'}`}
-                  required
-                />
-              </div>
-
-              {/* Buttons */}
-              <div className="flex gap-4 pt-4">
+              {/* ACTION BUTTONS (MATCHES IMAGE 8/9 STYLE) */}
+              <div className="flex flex-row gap-4 pt-4">
                 <button
                   type="submit"
-                  disabled={isLoading}
-                  className={`flex-1 py-4 rounded-xl font-bold transition-all duration-300 flex items-center justify-center gap-2 ${theme === 'dark' ? 'bg-gradient-to-r from-blue-600 to-blue-700 hover:from-blue-700 hover:to-blue-800 text-white shadow-lg hover:shadow-xl disabled:opacity-50' : 'bg-gradient-to-r from-blue-600 to-blue-700 hover:from-blue-700 hover:to-blue-800 text-white shadow-lg hover:shadow-xl disabled:opacity-50'}`}
+                  className="flex-1 py-3.5 px-6 rounded-xl font-bold text-white bg-[#0077cc] hover:bg-[#005fa3] transition-all flex items-center justify-center gap-2 text-base shadow-lg active:scale-95"
                 >
-                  {isLoading ? (
-                    <>
-                      <Loader size={20} className="animate-spin" />
-                      {language === 'km' ? 'ផ្ញើឡើង...' : 'Sending...'}
-                    </>
-                  ) : (
-                    <>
-                      <Send size={20} />
-                      {language === 'km' ? 'បញ្ជូន' : 'Send Message'}
-                    </>
-                  )}
+                  {language === 'km' ? 'បញ្ជូន' : 'Send'}
                 </button>
+                
                 <button
-                  type="reset"
-                  onClick={() => setFormData({ name: '', lastName: '', email: '', phone: '', message: '' })}
-                  className={`px-8 py-4 rounded-xl font-bold transition-all duration-300 ${theme === 'dark' ? 'bg-slate-700 hover:bg-slate-600 text-white' : 'bg-slate-200 hover:bg-slate-300 text-slate-900'}`}
+                  type="button"
+                  onClick={handleCancel}
+                  className="flex-1 py-3.5 px-6 rounded-xl font-bold text-white bg-[#0077cc] hover:bg-[#005fa3] transition-all flex items-center justify-center gap-2 text-base shadow-lg active:scale-95"
                 >
-                  {language === 'km' ? 'បោះបង់' : 'Clear'}
+                  {language === 'km' ? 'បោះបង់' : 'Cancel'}
                 </button>
               </div>
-
-              {/* Success Message */}
-              {submitted && (
-                <div className="p-4 bg-green-500/20 border-2 border-green-500 rounded-xl text-green-500 font-bold text-center animate-pulse">
-                  {language === 'km' ? '✓ សារត្រូវបានផ្ញើដោយជោគជ័យ!' : '✓ Message sent successfully!'}
-                </div>
-              )}
             </form>
           </div>
         </div>
       </section>
 
-      {/* Footer */}
-      <footer className={`text-white py-16 px-6 transition-colors duration-300 ${theme === 'dark' ? 'bg-slate-900' : 'bg-slate-900'}`}>
-        <div className="max-w-6xl mx-auto">
-          <div className="grid md:grid-cols-4 gap-12 mb-12">
+      {/* FOOTER SECTION (MATCHES IMAGE 2) */}
+      <footer className={`${currentTheme === 'dark' ? 'bg-[#0f172a] border-slate-800' : 'bg-white border-slate-100'} border-t py-16 px-6`}>
+        <div className="max-w-6xl mx-auto grid md:grid-cols-3 gap-12">
+          <div>
+            <h3 className="text-3xl font-black text-blue-600 mb-4">DocuLink</h3>
+            <p className="text-sm text-slate-500 leading-relaxed font-medium">
+              Share and discover study materials together. Empowering the next generation of students in Cambodia.
+            </p>
+          </div>
+          <div className="grid grid-cols-2 gap-4">
             <div>
-              <h3 className="text-2xl font-black mb-6">DocuLink</h3>
-              <p className="text-slate-400 mb-6 leading-relaxed">
-                បេសកកម្មរបស់យើងគឺការមានស្មារតីចែករំលែកឯកសារជំនួយដល់និស្សិតទាំងអស់ក្នុងការសិក្សារស្រាវជ្រាវ។
-              </p>
-              <div className="flex gap-4">
-                <button className="p-3 bg-slate-800 rounded-lg hover:bg-slate-700 transition-colors duration-300 hover:scale-110">
-                  <Facebook size={20} />
-                </button>
-                <button className="p-3 bg-slate-800 rounded-lg hover:bg-slate-700 transition-colors duration-300 hover:scale-110">
-                  <Twitter size={20} />
-                </button>
-                <button className="p-3 bg-slate-800 rounded-lg hover:bg-slate-700 transition-colors duration-300 hover:scale-110">
-                  <Linkedin size={20} />
-                </button>
-                <button className="p-3 bg-slate-800 rounded-lg hover:bg-slate-700 transition-colors duration-300 hover:scale-110">
-                  <Instagram size={20} />
-                </button>
-              </div>
-            </div>
-
-            <div>
-              <h4 className="font-bold mb-6 text-lg">តំណរភ្ជាប់រហ័ស</h4>
-              <ul className="space-y-3 text-slate-400">
-                <li><a href="#" className="hover:text-white transition-colors duration-300">ទំព័រដើម</a></li>
-                <li><a href="#" className="hover:text-white transition-colors duration-300">រុករកឯកសារ</a></li>
-                <li><a href="#" className="hover:text-white transition-colors duration-300">សហគមន៍</a></li>
-                <li><a href="#" className="hover:text-white transition-colors duration-300">ព្រឹត្តិការណ៏</a></li>
+              <h4 className="font-bold text-xs uppercase tracking-widest text-slate-400 mb-4">Quick Links</h4>
+              <ul className="space-y-3 text-sm font-semibold text-slate-600 dark:text-slate-300">
+                <li className="hover:text-blue-600 cursor-pointer">Home</li>
+                <li className="hover:text-blue-600 cursor-pointer">Documents</li>
+                <li className="hover:text-blue-600 cursor-pointer">Community</li>
               </ul>
             </div>
-
             <div>
-              <h4 className="font-bold mb-6 text-lg">ព័ត៌មាន</h4>
-              <ul className="space-y-3 text-slate-400">
-                <li><a href="#" className="hover:text-white transition-colors duration-300">អំពីរយើង</a></li>
-                <li><a href="#" className="hover:text-white transition-colors duration-300">ទំនាក់ទំនង</a></li>
-                <li><a href="#" className="hover:text-white transition-colors duration-300">គោលការណ៍ឯកជន</a></li>
-                <li><a href="#" className="hover:text-white transition-colors duration-300">លក្ខខណ្ឌប្រើប្រាស់</a></li>
-              </ul>
-            </div>
-
-            <div>
-              <h4 className="font-bold mb-6 text-lg">ទំនាក់ទំនង</h4>
-              <div className="text-slate-400 space-y-3">
-                <p className="flex items-center gap-3">
-                  <MapPin size={16} />
-                  ផ្ទះលេខ: XXXX, ផ្លូវ YYYY, ភ្នំពេញ
-                </p>
-                <p className="flex items-center gap-3">
-                  <Phone size={16} />
-                  (855) 12 345 678
-                </p>
-                <p className="flex items-center gap-3">
-                  <Mail size={16} />
-                  doculink@gmail.com
-                </p>
-              </div>
+              <h4 className="font-bold text-xs uppercase tracking-widest text-slate-400 mb-4">Contact</h4>
+              <p className="text-sm font-semibold text-slate-600 dark:text-slate-300 break-all">{CONTACT.email}</p>
+              <p className="text-sm font-semibold text-slate-600 dark:text-slate-300 mt-2">{CONTACT.phone}</p>
             </div>
           </div>
-
-          <div className="border-t border-slate-800 pt-8 text-center text-slate-400">
-            <p className="text-lg">© 2026 DocuLink។ រក្សាសិទ្ធិគ្រប់យ៉ាង។</p>
+          <div className="flex gap-4 items-start md:justify-end">
+            <SocialBtn icon={<Facebook size={18}/>} />
+            <SocialBtn icon={<Twitter size={18}/>} />
+            <SocialBtn icon={<Linkedin size={18}/>} />
+            <SocialBtn icon={<Instagram size={18}/>} />
           </div>
+        </div>
+        <div className="max-w-6xl mx-auto border-t border-slate-100 dark:border-slate-800 mt-12 pt-8 text-center text-[11px] text-slate-400 font-bold tracking-widest uppercase">
+          © 2026 DocuLink PP. All Rights Reserved.
         </div>
       </footer>
     </main>
+  )
+}
+
+/* ---------------- HELPER COMPONENTS ---------------- */
+
+function InfoItem({ icon, label, value }: any) {
+  return (
+    <div className="flex items-start gap-5 group">
+      <div className="p-3 rounded-2xl bg-blue-50 dark:bg-blue-900/20 text-blue-600 dark:text-blue-400 group-hover:bg-blue-600 group-hover:text-white transition-all duration-300">
+        {icon}
+      </div>
+      <div>
+        <p className="text-[10px] font-black tracking-[0.2em] text-slate-400 uppercase mb-1">{label}</p>
+        <p className="text-sm font-bold leading-relaxed dark:text-slate-200">{value}</p>
+      </div>
+    </div>
+  )
+}
+
+function Input({ label, theme, ...props }: any) {
+  return (
+    <div className="space-y-2">
+      <label className="text-[11px] font-black text-slate-500 dark:text-slate-400 ml-1 uppercase tracking-widest">{label}</label>
+      <input
+        {...props}
+        className={`w-full px-5 py-3.5 rounded-2xl border outline-none transition-all text-sm font-bold ${
+          theme === 'dark' 
+            ? 'bg-[#0f172a] border-slate-800 focus:border-blue-500 focus:ring-4 focus:ring-blue-500/10' 
+            : 'bg-slate-50 border-slate-100 focus:bg-white focus:border-blue-500 focus:ring-4 focus:ring-blue-500/10'
+        }`}
+      />
+    </div>
+  )
+}
+
+function Textarea({ label, theme, ...props }: any) {
+  return (
+    <div className="space-y-2">
+      <label className="text-[11px] font-black text-slate-500 dark:text-slate-400 ml-1 uppercase tracking-widest">{label}</label>
+      <textarea
+        {...props}
+        rows={5}
+        className={`w-full px-5 py-4 rounded-2xl border outline-none transition-all resize-none text-sm font-bold ${
+          theme === 'dark' 
+            ? 'bg-[#0f172a] border-slate-800 focus:border-blue-500 focus:ring-4 focus:ring-blue-500/10' 
+            : 'bg-slate-50 border-slate-100 focus:bg-white focus:border-blue-500 focus:ring-4 focus:ring-blue-500/10'
+        }`}
+      />
+    </div>
+  )
+}
+
+function SocialBtn({ icon }: any) {
+  return (
+    <div className="w-12 h-12 rounded-2xl bg-slate-100 dark:bg-slate-800 flex items-center justify-center text-slate-500 hover:bg-blue-600 hover:text-white hover:-translate-y-1 cursor-pointer transition-all duration-300 shadow-sm">
+      {icon}
+    </div>
   )
 }
