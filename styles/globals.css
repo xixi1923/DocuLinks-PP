@@ -8,6 +8,11 @@ html, body { height: 100%; }
 body { @apply bg-white text-slate-900; }
 .dark body { @apply bg-slate-950 text-slate-100; }
 
+/* Apply Kantumruy font to all elements for Khmer text */
+* {
+  font-family: var(--font-kantumruy), var(--font-inter), system-ui, sans-serif;
+}
+
 .card { @apply border rounded-lg bg-white dark:bg-slate-900 dark:border-slate-800; }
 
 /* 1:1 feel: tighter nav, clean hero spacing, pill filters */
@@ -197,3 +202,111 @@ body { @apply bg-white text-slate-900; }
   0% { left: -100%; }
   100% { left: 100%; }
 }
+
+/* Hero decorative blobs */
+.hero-blob-1,
+.hero-blob-2 {
+  position: absolute;
+  width: 520px;
+  height: 420px;
+  filter: blur(64px);
+  transform: translate3d(-10%, -20%, 0);
+  opacity: 0.9;
+  border-radius: 40%;
+}
+.hero-blob-1 {
+  left: -8%;
+  top: -12%;
+  background: linear-gradient(135deg, rgba(124,58,237,0.9), rgba(6,182,212,0.8));
+  animation: float 6s ease-in-out infinite, gradient-x 5s ease infinite;
+}
+.hero-blob-2 {
+  right: -6%;
+  bottom: -10%;
+  background: linear-gradient(135deg, rgba(239,68,68,0.85), rgba(249,115,22,0.75));
+  animation: float 7s ease-in-out infinite reverse, gradient-x 6s ease infinite;
+}
+
+.hero-graphic { position: relative; }
+
+/* Responsive tweaks */
+@media (max-width: 768px) {
+  .hero-blob-1, .hero-blob-2 {
+    width: 320px;
+    height: 260px;
+    filter: blur(48px);
+    transform: translate3d(-5%, -10%, 0) scale(0.85);
+    opacity: 0.85;
+  }
+
+  .hero-graphic { height: 56vw; min-height: 220px; }
+}
+
+@media (min-width: 1200px) {
+  .hero-blob-1, .hero-blob-2 { width: 720px; height: 560px; filter: blur(84px); }
+}
+
+/* Document card visual helpers inside hero */
+.hero-graphic .document-card {
+  background: linear-gradient(180deg, rgba(255,255,255,0.95), rgba(255,255,255,0.9));
+  border-radius: 14px;
+  box-shadow: 0 20px 40px rgba(2,6,23,0.12);
+  border: 1px solid rgba(255,255,255,0.6);
+}
+
+/* Prefer reduced motion */
+@media (prefers-reduced-motion: reduce) {
+  .animate-float, .animate-spin-slow, .animate-gradient-x, .hero-blob-1, .hero-blob-2 {
+    animation: none !important;
+    transition: none !important;
+  }
+}
+
+/* Ensure SVG blobs don't capture pointer events */
+.hero-graphic svg { pointer-events: none; }
+
+/* About / Mission circular image helper */
+.about-circle {
+  width: 22rem;
+  height: 22rem;
+  border-radius: 9999px;
+  overflow: hidden;
+  box-shadow: 0 30px 60px rgba(2,6,23,0.12);
+  border: 6px solid rgba(255,255,255,0.6);
+}
+
+@media (max-width: 768px) {
+  .about-circle { width: 18rem; height: 18rem; border-width: 4px; }
+}
+
+/* FAQ bubbles */
+.faq-bubble {
+  position: absolute;
+  width: 64px;
+  height: 64px;
+  border-radius: 9999px;
+  background: linear-gradient(135deg,#06b6d4,#7c3aed);
+  color: white;
+  display:flex;
+  align-items:center;
+  justify-content:center;
+  font-weight:700;
+  box-shadow: 0 10px 30px rgba(2,6,23,0.12);
+}
+.faq-bubble.top-8 { top: 2rem; left: 1.5rem; }
+.faq-bubble.bottom-12 { bottom: 3rem; left: 0.5rem; }
+.faq-bubble.middle-right { right: 1.25rem; top: 45%; transform: translateY(-50%); }
+
+/* Accordion card styles */
+.faq-card { border-radius: 14px; }
+.faq-card button { background: transparent; border: none; cursor: pointer; }
+
+@media (max-width: 768px) {
+  .faq-bubble { width:48px; height:48px; font-size:14px; }
+  .faq-bubble.top-8 { top:1rem; left:0.5rem }
+  .faq-bubble.bottom-12 { bottom:1rem; left:0.5rem }
+  .faq-bubble.middle-right { right:0.75rem }
+}
+
+
+
