@@ -8,8 +8,8 @@ import LanguageSwitcher from './LanguageSwitcher'
 import { useLanguage } from '@/contexts/LanguageContext'
 import { auth } from '@/lib/firebaseConfig'
 import { onAuthStateChanged, signOut } from 'firebase/auth'
-import { supabase } from '@/lib/supabaseClient'
-import { User, LogOut, Settings } from 'lucide-react'
+import { User, LogOut, Settings, Search } from 'lucide-react'
+import { useUserRole } from '@/contexts/UserRoleContext'
 
 export default function Navbar() {
   const pathname = usePathname()
@@ -41,10 +41,13 @@ export default function Navbar() {
         <nav className="hidden md:flex items-center gap-6">
           {link('/', 'home')}
           {link('/documents', 'explore')}
-          {link('/upload', 'upload')}
+          {link('/post', 'post')}
           {link('/about', 'aboutUs')}
           {link('/contact', 'contactUs')}
           {isHydrated && user && (<AdminLink />)}
+          <Link href="/documents" className="p-2 rounded-lg text-slate-700 dark:text-slate-300 hover:text-indigo-600 dark:hover:text-indigo-400 hover:bg-slate-100 dark:hover:bg-slate-800/50 transition duration-300">
+            <Search size={20} />
+          </Link>
         </nav>
         <div className="flex items-center gap-3">
           {isHydrated && <LanguageSwitcher />}
@@ -160,16 +163,8 @@ function ProfileMenu({ user }: { user: any }) {
 
 function AdminLink() {
   const pathname = usePathname()
-  const [isAdmin, setIsAdmin] = useState(false)
+  const { isAdmin } = useUserRole()
   const { t } = useLanguage()
-  useEffect(() => {
-    const unsubscribe = onAuthStateChanged(auth, async (user) => {
-      if (!user) { setIsAdmin(false); return }
-      const { data: profile } = await supabase.from('profiles').select('role').eq('id', user.uid).maybeSingle()
-      setIsAdmin((profile?.role ?? 'user') === 'admin')
-    })
-    return () => unsubscribe()
-  }, [])
   if (!isAdmin) return null
   return (
     <Link href="/admin" className={clsx(

@@ -8,9 +8,9 @@ html, body { height: 100%; }
 body { @apply bg-white text-slate-900; }
 .dark body { @apply bg-slate-950 text-slate-100; }
 
-/* Apply Kantumruy font to all elements for Khmer text */
+/* Apply Khmer fonts to all elements */
 * {
-  font-family: var(--font-kantumruy), var(--font-inter), system-ui, sans-serif;
+  font-family: var(--font-battambang), var(--font-hanuman), system-ui, sans-serif;
 }
 
 .card { @apply border rounded-lg bg-white dark:bg-slate-900 dark:border-slate-800; }
@@ -318,5 +318,25 @@ body { @apply bg-white text-slate-900; }
   .faq-bubble.middle-right { right:0.75rem }
 }
 
+/* Custom scrollbar styles for post feed */
+.scrollbar-thin::-webkit-scrollbar {
+  height: 6px;
+  width: 6px;
+}
 
+.scrollbar-thin::-webkit-scrollbar-track {
+  @apply bg-slate-200 dark:bg-slate-800 rounded-full;
+}
 
+.scrollbar-thin::-webkit-scrollbar-thumb {
+  @apply bg-slate-400 dark:bg-slate-600 rounded-full hover:bg-slate-500 dark:hover:bg-slate-500;
+}
+
+.scrollbar-hide::-webkit-scrollbar {
+  display: none;
+}
+
+.scrollbar-hide {
+  -ms-overflow-style: none;
+  scrollbar-width: none;
+}

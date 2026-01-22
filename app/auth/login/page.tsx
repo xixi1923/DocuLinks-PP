@@ -6,7 +6,7 @@ import Link from 'next/link'
 import { Mail, Lock, LogIn, ArrowRight, Sparkles, X } from 'lucide-react'
 import { auth, googleProvider } from '@/lib/firebaseConfig'
 import { signInWithEmailAndPassword, signInWithPopup } from 'firebase/auth'
-import { supabase } from '@/lib/supabaseClient'
+import { useToast } from '@/contexts/ToastContext'
 
 export default function LoginPage() {
   const [email, setEmail] = useState('')
@@ -15,6 +15,7 @@ export default function LoginPage() {
   const [errors, setErrors] = useState<{email?: string, password?: string}>({})
   const [loading, setLoading] = useState(false)
   const router = useRouter()
+  const toast = useToast()
 
   const validateForm = () => {
     const newErrors: {email?: string, password?: string} = {}
@@ -36,14 +37,15 @@ export default function LoginPage() {
     setLoading(true)
     try {
       await signInWithEmailAndPassword(auth, email, password)
+      toast.success('Signed in successfully!')
       setLoading(false)
       router.push('/')
     } catch (error: any) {
-      let errorMsg = 'មានបញ្ហាក្នុងការចូលប្រើ'
-      if (error.code === 'auth/user-not-found') errorMsg = 'គណនីនេះមិនមាន'
-      else if (error.code === 'auth/wrong-password') errorMsg = 'ពាក្យសម្ងាត់មិនត្រឹមត្រូវ'
-      else if (error.code === 'auth/too-many-requests') errorMsg = 'ព្យាយាមលើសឆ្ងាយ សូមព្យាយាមម្តងទៀតក្រោយមក'
-      setMsg(errorMsg)
+      let errorMsg = 'Sign in failed'
+      if (error.code === 'auth/user-not-found') errorMsg = 'Account not found'
+      else if (error.code === 'auth/wrong-password') errorMsg = 'Incorrect password'
+      else if (error.code === 'auth/too-many-requests') errorMsg = 'Too many attempts. Please try again later'
+      toast.error(errorMsg)
       setLoading(false)
     }
   }
@@ -54,18 +56,11 @@ export default function LoginPage() {
     try {
       const result = await signInWithPopup(auth, googleProvider)
       const user = result.user
-      
-      // Create or update profile in Supabase
-      await supabase.from('profiles').upsert({ 
-        id: user.uid, 
-        display_name: user.displayName || user.email?.split('@')[0] || 'User',
-        avatar_url: user.photoURL || `https://api.dicebear.com/7.x/avataaars/svg?seed=${user.uid}`
-      }, { onConflict: 'id' })
-      
+      toast.success('Signed in with Google successfully!')
       setLoading(false)
       router.push('/')
     } catch (error: any) {
-      setMsg('មានបញ្ហាក្នុងការចូលប្រើ Google')
+      toast.error('Google sign in failed')
       setLoading(false)
     }
   }

@@ -1,22 +1,27 @@
 
 'use client'
-import { useEffect, useState } from 'react'
-import { supabase } from '@/lib/supabaseClient'
+import { useEffect, useState, useMemo } from 'react'
 import { auth } from '@/lib/firebaseConfig'
-import { onAuthStateChanged, updateProfile } from 'firebase/auth'
+import { onAuthStateChanged, updateProfile, signOut } from 'firebase/auth'
 import DocumentCard from '@/components/DocumentCard'
-import { User, Mail, Calendar, FileText, Heart, MessageSquare, Edit2, Camera, Shield, Bookmark } from 'lucide-react'
+import { User, Mail, Calendar, FileText, Heart, MessageSquare, Edit2, Shield, Bookmark, LogOut, Upload, Clock } from 'lucide-react'
 import { useRouter } from 'next/navigation'
+import { useToast } from '@/contexts/ToastContext'
+import { useUserRole } from '@/contexts/UserRoleContext'
+import { getUserStats, getUserDocuments, getUserFavoritedDocuments, type DocumentData } from '@/lib/firestoreHelpers'
 
 export default function ProfilePage() {
   const [user, setUser] = useState<any>(null)
-  const [profile, setProfile] = useState<any>(null)
-  const [docs, setDocs] = useState<any[]>([])
   const [stats, setStats] = useState({ uploads: 0, likes: 0, comments: 0, favorites: 0 })
   const [loading, setLoading] = useState(true)
   const [editing, setEditing] = useState(false)
   const [displayName, setDisplayName] = useState('')
+  const [userDocuments, setUserDocuments] = useState<DocumentData[]>([])
+  const [favoritedDocuments, setFavoritedDocuments] = useState<DocumentData[]>([])
+  const [activeTab, setActiveTab] = useState<'uploads' | 'favorites'>('uploads')
   const router = useRouter()
+  const toast = useToast()
+  const { role } = useUserRole()
 
   useEffect(() => {
     const unsubscribe = onAuthStateChanged(auth, async (currentUser) => {
@@ -26,75 +31,49 @@ export default function ProfilePage() {
       }
       setUser(currentUser)
       setDisplayName(currentUser.displayName || currentUser.email?.split('@')[0] || '')
-
-      // Get profile from Supabase
-      const { data: profileData } = await supabase
-        .from('profiles')
-        .select('*')
-        .eq('id', currentUser.uid)
-        .maybeSingle()
-      setProfile(profileData)
-
-      // Get user's documents
-      const { data: docsData } = await supabase
-        .from('documents')
-        .select('*')
-        .eq('user_id', currentUser.uid)
-        .order('created_at', { ascending: false })
-      setDocs(docsData || [])
-
-      // Get stats
-      const { count: uploadsCount } = await supabase
-        .from('documents')
-        .select('*', { count: 'exact', head: true })
-        .eq('user_id', currentUser.uid)
-
-      const { count: likesCount } = await supabase
-        .from('likes')
-        .select('*', { count: 'exact', head: true })
-        .eq('user_id', currentUser.uid)
-
-      const { count: commentsCount } = await supabase
-        .from('comments')
-        .select('*', { count: 'exact', head: true })
-        .eq('user_id', currentUser.uid)
-
-      const { count: favoritesCount } = await supabase
-        .from('favorites')
-        .select('*', { count: 'exact', head: true })
-        .eq('user_id', currentUser.uid)
-
-      setStats({
-        uploads: uploadsCount || 0,
-        likes: likesCount || 0,
-        comments: commentsCount || 0,
-        favorites: favoritesCount || 0
-      })
-
+      
+      // Load real stats
+      const userStats = await getUserStats(currentUser.uid)
+      setStats(userStats)
+      
+      // Load user's documents
+      const docs = await getUserDocuments(currentUser.uid)
+      setUserDocuments(docs)
+      
+      // Load favorited documents
+      const favDocs = await getUserFavoritedDocuments(currentUser.uid)
+      setFavoritedDocuments(favDocs)
+      
       setLoading(false)
     })
     return () => unsubscribe()
-  }, [router])
+  }, [router, toast])
 
   const handleUpdateProfile = async () => {
     if (!user) return
     try {
-      // Update Firebase display name
       await updateProfile(user, { displayName })
-      
-      // Update Supabase profile
-      await supabase
-        .from('profiles')
-        .update({ display_name: displayName })
-        .eq('id', user.uid)
-
       setEditing(false)
-      // Refresh user
       setUser({ ...user, displayName })
+      toast.success('Profile updated successfully!')
     } catch (error) {
-      console.error('Failed to update profile', error)
+      toast.error('Failed to update profile')
     }
   }
+
+  const handleSignOut = async () => {
+    try {
+      await signOut(auth)
+      toast.success('Signed out successfully!')
+      router.push('/auth/login')
+    } catch (error) {
+      toast.error('Failed to sign out')
+    }
+  }
+
+  const displayedDocuments = useMemo(() => {
+    return activeTab === 'uploads' ? userDocuments : favoritedDocuments
+  }, [activeTab, userDocuments, favoritedDocuments])
 
   if (loading) {
     return (
@@ -123,11 +102,6 @@ export default function ProfilePage() {
                   <User size={48} />
                 )}
               </div>
-              {profile?.role === 'admin' && (
-                <div className="absolute -top-2 -right-2 w-10 h-10 bg-amber-500 rounded-full flex items-center justify-center shadow-lg">
-                  <Shield size={20} className="text-white" />
-                </div>
-              )}
             </div>
 
             {/* User Info */}
@@ -167,6 +141,12 @@ export default function ProfilePage() {
                       <Edit2 size={20} className="text-slate-600 dark:text-slate-400" />
                     </button>
                   </div>
+                  {role === 'admin' && (
+                    <div className="inline-flex items-center gap-2 px-3 py-1 bg-gradient-to-r from-purple-600 to-pink-600 text-white rounded-full text-sm font-semibold shadow-lg">
+                      <Shield size={14} />
+                      Admin
+                    </div>
+                  )}
                   <div className="space-y-2 text-slate-600 dark:text-slate-400">
                     <div className="flex items-center gap-2">
                       <Mail size={16} />
@@ -176,12 +156,6 @@ export default function ProfilePage() {
                       <Calendar size={16} />
                       <span>ចូលរួមនៅថ្ងៃទី {new Date(user.metadata.creationTime).toLocaleDateString('km-KH')}</span>
                     </div>
-                    {profile?.role === 'admin' && (
-                      <div className="inline-flex items-center gap-2 bg-amber-100 dark:bg-amber-900/30 text-amber-800 dark:text-amber-300 px-3 py-1 rounded-full text-sm font-semibold">
-                        <Shield size={14} />
-                        អ្នកគ្រប់គ្រង
-                      </div>
-                    )}
                   </div>
                 </>
               )}
@@ -211,25 +185,137 @@ export default function ProfilePage() {
               <div className="text-sm text-slate-600 dark:text-slate-400 font-medium">ឯកសាររក្សាទុក</div>
             </div>
           </div>
+
+          {/* Sign Out Button */}
+          <div className="mt-6 pt-6 border-t border-slate-200 dark:border-slate-700">
+            <button
+              onClick={handleSignOut}
+              className="flex items-center gap-2 px-4 py-2 text-red-600 dark:text-red-400 hover:bg-red-50 dark:hover:bg-red-900/20 rounded-lg transition-colors font-medium"
+            >
+              <LogOut size={18} />
+              ចាកចេញ
+            </button>
+          </div>
         </div>
 
-        {/* Uploaded Documents */}
+        {/* Documents Tabs */}
+        <div className="mb-6">
+          <div className="flex gap-2">
+            <button
+              onClick={() => setActiveTab('uploads')}
+              className={`flex-1 py-3 px-6 rounded-lg font-semibold transition-all ${
+                activeTab === 'uploads'
+                  ? 'bg-white dark:bg-slate-800 text-indigo-600 dark:text-indigo-400 shadow-lg border-2 border-indigo-200 dark:border-indigo-900'
+                  : 'bg-white/50 dark:bg-slate-800/50 text-slate-600 dark:text-slate-400 hover:bg-white dark:hover:bg-slate-800 border-2 border-transparent'
+              }`}
+            >
+              <Upload className="inline-block w-5 h-5 mr-2" />
+              ឯកសារផ្ទុកឡើង ({stats.uploads})
+            </button>
+            <button
+              onClick={() => setActiveTab('favorites')}
+              className={`flex-1 py-3 px-6 rounded-lg font-semibold transition-all ${
+                activeTab === 'favorites'
+                  ? 'bg-white dark:bg-slate-800 text-amber-600 dark:text-amber-400 shadow-lg border-2 border-amber-200 dark:border-amber-900'
+                  : 'bg-white/50 dark:bg-slate-800/50 text-slate-600 dark:text-slate-400 hover:bg-white dark:hover:bg-slate-800 border-2 border-transparent'
+              }`}
+            >
+              <Bookmark className="inline-block w-5 h-5 mr-2" />
+              ឯកសាររក្សាទុក ({stats.favorites})
+            </button>
+          </div>
+        </div>
+
+        {/* Documents Display */}
         <div className="bg-white dark:bg-slate-800 rounded-2xl shadow-lg p-8 border border-slate-200 dark:border-slate-700">
-          <h2 className="text-2xl font-bold text-slate-900 dark:text-white mb-6">📄 ឯកសារដែលបានផ្ទុកឡើង</h2>
-          {docs.length === 0 ? (
+          {displayedDocuments.length === 0 ? (
             <div className="text-center py-16">
-              <FileText size={48} className="text-slate-300 dark:text-slate-600 mx-auto mb-4 opacity-50" />
-              <p className="text-slate-600 dark:text-slate-400 text-lg font-medium">អ្នកមិនទាន់បានផ្ទុកឯកសារណាមួយឡើយទេ</p>
-              <button
-                onClick={() => router.push('/upload')}
-                className="mt-4 px-6 py-3 bg-gradient-to-r from-indigo-600 to-purple-600 text-white rounded-lg font-semibold hover:shadow-lg transition-all"
-              >
-                ⬆️ ផ្ទុកឯកសារដំបូង
-              </button>
+              {activeTab === 'uploads' ? (
+                <>
+                  <Upload size={48} className="text-slate-300 dark:text-slate-600 mx-auto mb-4 opacity-50" />
+                  <p className="text-slate-600 dark:text-slate-400 text-lg font-medium mb-4">គ្មានឯកសារដែលបានផ្ទុកឡើង</p>
+                  <button
+                    onClick={() => router.push('/upload')}
+                    className="px-6 py-3 bg-gradient-to-r from-indigo-600 to-purple-600 text-white rounded-lg font-semibold hover:shadow-lg transition-all"
+                  >
+                    ផ្ទុកឯកសារឥឡូវនេះ
+                  </button>
+                </>
+              ) : (
+                <>
+                  <Bookmark size={48} className="text-slate-300 dark:text-slate-600 mx-auto mb-4 opacity-50" />
+                  <p className="text-slate-600 dark:text-slate-400 text-lg font-medium mb-4">គ្មានឯកសាររក្សាទុក</p>
+                  <button
+                    onClick={() => router.push('/explore')}
+                    className="px-6 py-3 bg-gradient-to-r from-amber-600 to-orange-600 text-white rounded-lg font-semibold hover:shadow-lg transition-all"
+                  >
+                    ស្វែងរកឯកសារ
+                  </button>
+                </>
+              )}
             </div>
           ) : (
-            <div className="grid gap-4 grid-cols-1 sm:grid-cols-2 md:grid-cols-3">
-              {docs.map((d: any) => <DocumentCard key={d.id} doc={d} />)}
+            <div className="space-y-4">
+              {displayedDocuments.map((doc) => (
+                <div
+                  key={doc.id}
+                  className="p-6 border border-slate-200 dark:border-slate-700 rounded-xl hover:shadow-lg transition-shadow bg-slate-50 dark:bg-slate-900/50"
+                >
+                  <div className="flex items-start justify-between gap-4">
+                    <div className="flex-1">
+                      <h3 className="text-lg font-bold text-slate-900 dark:text-white mb-2">
+                        {doc.title}
+                      </h3>
+                      {doc.description && (
+                        <p className="text-slate-600 dark:text-slate-400 text-sm mb-3">
+                          {doc.description}
+                        </p>
+                      )}
+                      <div className="flex flex-wrap items-center gap-3 text-sm">
+                        {activeTab === 'uploads' && (
+                          <span
+                            className={`px-3 py-1 rounded-full font-semibold ${
+                              doc.status === 'approved'
+                                ? 'bg-green-100 dark:bg-green-900/30 text-green-700 dark:text-green-300'
+                                : doc.status === 'pending'
+                                ? 'bg-yellow-100 dark:bg-yellow-900/30 text-yellow-700 dark:text-yellow-300'
+                                : 'bg-red-100 dark:bg-red-900/30 text-red-700 dark:text-red-300'
+                            }`}
+                          >
+                            {doc.status === 'approved' ? '✓ Approved' : doc.status === 'pending' ? '⏳ Pending' : '✗ Rejected'}
+                          </span>
+                        )}
+                        <span className="flex items-center gap-1 text-slate-600 dark:text-slate-400">
+                          <Heart size={16} />
+                          {doc.likes_count || 0}
+                        </span>
+                        <span className="flex items-center gap-1 text-slate-600 dark:text-slate-400">
+                          <MessageSquare size={16} />
+                          {doc.comments_count || 0}
+                        </span>
+                        <span className="flex items-center gap-1 text-slate-600 dark:text-slate-400">
+                          <Bookmark size={16} />
+                          {doc.favorites_count || 0}
+                        </span>
+                        <span className="flex items-center gap-1 text-slate-600 dark:text-slate-400">
+                          <Clock size={16} />
+                          {doc.created_at.toDate().toLocaleDateString()}
+                        </span>
+                      </div>
+                    </div>
+                    {doc.file_url && (
+                      <a
+                        href={doc.file_url}
+                        target="_blank"
+                        rel="noopener noreferrer"
+                        className="px-4 py-2 bg-indigo-600 hover:bg-indigo-700 text-white rounded-lg font-semibold transition-colors whitespace-nowrap"
+                      >
+                        ទាញយក
+                      </a>
+                    )}
+                  </div>
+                </div>
+              ))}
             </div>
           )}
         </div>
@@ -237,3 +323,4 @@ export default function ProfilePage() {
     </main>
   )
 }
+
