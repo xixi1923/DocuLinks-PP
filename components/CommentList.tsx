@@ -1,26 +1,38 @@
 
 'use client'
 import { useEffect, useState } from 'react'
-import { supabase } from '@/lib/supabaseClient'
+import { auth, onAuthStateChanged } from '@/lib/firebaseClient'
+import { addComment, getComments } from '@/lib/firestoreHelpers'
+
 export default function CommentList({ documentId }: { documentId: string }) {
   const [comments, setComments] = useState<any[]>([])
   const [content, setContent] = useState('')
+  const [userId, setUserId] = useState<string | null>(null)
+
   const load = async () => {
-    const { data } = await supabase
-      .from('comments')
-      .select('id,content,created_at, user_id')
-      .eq('document_id', documentId)
-      .order('created_at', { ascending: false })
-    setComments(data ?? [])
+    const data = await getComments(documentId)
+    setComments(data)
   }
-  useEffect(() => { load() }, [documentId])
+
+  useEffect(() => {
+    load()
+    const unsub = onAuthStateChanged(auth, (user) => {
+      setUserId(user?.uid ?? null)
+    })
+    return () => unsub()
+  }, [documentId])
+
   const post = async () => {
-    const { data: { user } } = await supabase.auth.getUser()
-    if (!user) return alert('Please log in')
+    if (!userId) {
+      alert('Please log in')
+      return
+    }
     if (!content.trim()) return
-    await supabase.from('comments').insert({ document_id: documentId, user_id: user.id, content })
-    setContent(''); load()
+    await addComment(documentId, userId, content)
+    setContent('')
+    load()
   }
+
   return (
     <div className="space-y-3">
       <div className="flex gap-2">
@@ -30,7 +42,7 @@ export default function CommentList({ documentId }: { documentId: string }) {
       <ul className="space-y-2">
         {comments.map(c => (
           <li key={c.id} className="card p-3">
-            <div className="text-sm text-slate-500 dark:text-slate-400">{c.user_id} • {new Date(c.created_at).toLocaleString()}</div>
+            <div className="text-sm text-slate-500 dark:text-slate-400">{c.user_id} • {c.created_at?.toDate ? c.created_at.toDate().toLocaleString() : ''}</div>
             <div>{c.content}</div>
           </li>
         ))}

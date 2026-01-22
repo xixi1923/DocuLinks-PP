@@ -6,7 +6,7 @@ import Link from 'next/link'
 import { Mail, Lock, UserPlus, ArrowRight, Sparkles, Shield, Check, X } from 'lucide-react'
 import { auth, googleProvider } from '@/lib/firebaseConfig'
 import { createUserWithEmailAndPassword, signInWithPopup, updateProfile } from 'firebase/auth'
-import { supabase } from '@/lib/supabaseClient'
+import { useToast } from '@/contexts/ToastContext'
 
 export default function SignupPage() {
   const [email, setEmail] = useState('')
@@ -16,6 +16,7 @@ export default function SignupPage() {
   const [errors, setErrors] = useState<{email?: string, password?: string, confirm?: string}>({})
   const [loading, setLoading] = useState(false)
   const router = useRouter()
+  const toast = useToast()
 
   const validateForm = () => {
     const newErrors: {email?: string, password?: string, confirm?: string} = {}
@@ -44,20 +45,15 @@ export default function SignupPage() {
       const user = userCredential.user
       
       await updateProfile(user, {
-        displayName: email.split('@')[0]
+        displayName: email.split('@')[0],
+        photoURL: `https://api.dicebear.com/7.x/avataaars/svg?seed=${user.uid}`
       })
       
-      // Create profile in Supabase
-      await supabase.from('profiles').insert({ 
-        id: user.uid, 
-        display_name: email.split('@')[0],
-        avatar_url: `https://api.dicebear.com/7.x/avataaars/svg?seed=${user.uid}`
-      })
-      
+      toast.success('Account created successfully!')
       setLoading(false)
       router.push('/')
     } catch (error: any) {
-      setMsg(error.message || 'មានបញ្ហាក្នុងការបង្កើតគណនី')
+      toast.error(error.message || 'Failed to create account')
       setLoading(false)
     }
   }
@@ -68,18 +64,11 @@ export default function SignupPage() {
     try {
       const result = await signInWithPopup(auth, googleProvider)
       const user = result.user
-      
-      // Create or update profile in Supabase
-      const { error } = await supabase.from('profiles').upsert({ 
-        id: user.uid, 
-        display_name: user.displayName || user.email?.split('@')[0] || 'User',
-        avatar_url: user.photoURL || `https://api.dicebear.com/7.x/avataaars/svg?seed=${user.uid}`
-      }, { onConflict: 'id' })
-      
+      toast.success('Signed up with Google successfully!')
       setLoading(false)
       router.push('/')
     } catch (error: any) {
-      setMsg(error.message || 'មានបញ្ហាក្នុងការចុះឈ្មោះ')
+      toast.error(error.message || 'Failed to sign up')
       setLoading(false)
     }
   }

@@ -7,6 +7,10 @@ const config: Config = {
   theme: {
     extend: {
       container: { center: true, padding: '1rem' },
+      fontFamily: {
+        sans: ['var(--font-battambang)', 'var(--font-hanuman)', 'system-ui', 'sans-serif'],
+        khmer: ['var(--font-hanuman)', 'var(--font-battambang)', 'sans-serif'],
+      },
       colors: {
         brand: {
           DEFAULT: '#0ea5e9', // sky-500 accent
