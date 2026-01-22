@@ -1,0 +1,19 @@
+# Cloudflare Workers Configuration
+name = "doculinks-upload"
+account_id = "8089ae920b1fa6c8c63b68a69b19d1fa"
+main = "src/index.ts"
+compatibility_date = "2026-01-22"
+workers_dev = true
+
+# Environment variables
+[env.production]
+vars = { ENVIRONMENT = "production" }
+
+[env.development]
+vars = { ENVIRONMENT = "development" }
+
+# R2 Bucket binding
+[[r2_buckets]]
+binding = "DOCUMENTS_BUCKET"
+bucket_name = "doculinks-documents"
+preview_bucket_name = "doculinks-documents-preview"
