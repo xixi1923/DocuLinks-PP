@@ -1,87 +1,77 @@
 
 'use client'
 import { useEffect, useState } from 'react'
-import { supabase } from '@/lib/supabaseClient'
-import { Upload, FileText, Tag, Layers, Type, AlignLeft, Users, Lock, CheckCircle } from 'lucide-react'
-
-function uuid() {
-  return 'xxxxxxxx-xxxx-4xxx-yxxx-xxxxxxxxxxxx'.replace(/[xy]/g, c => {
-    const r = Math.random()*16|0, v = c === 'x' ? r : (r&0x3|0x8);
-    return v.toString(16)
-  })
-}
+import { auth } from '@/lib/firebaseConfig'
+import { onAuthStateChanged } from 'firebase/auth'
+import { Upload, FileText, Type } from 'lucide-react'
+import { useRouter } from 'next/navigation'
+import { useToast } from '@/contexts/ToastContext'
+import Link from 'next/link'
+import { useUserRole } from '@/contexts/UserRoleContext'
 
 export default function UploadPage() {
   const [title, setTitle] = useState('')
-  const [categoryId, setCategoryId] = useState<number | null>(null)
   const [description, setDescription] = useState('')
   const [file, setFile] = useState<File | null>(null)
-  const [tags, setTags] = useState('')
-  const [subject, setSubject] = useState('')
-  const [level, setLevel] = useState('intermediate')
-  const [isPublic, setIsPublic] = useState(true)
   const [loading, setLoading] = useState(false)
   const [msg, setMsg] = useState<string | null>(null)
   const [msgType, setMsgType] = useState<'success' | 'error'>('error')
-  const [cats, setCats] = useState<{id:number,name:string}[]>([])
+  const [successOpen, setSuccessOpen] = useState(false)
+  const [successInfo, setSuccessInfo] = useState<{ title: string; url: string }>({ title: '', url: '' })
+  const [user, setUser] = useState<any>(null)
+  const router = useRouter()
+  const toast = useToast()
+  const { role } = useUserRole()
 
-  useEffect(()=>{
-    supabase.from('categories').select('id,name').order('name').then(({data})=> setCats(data||[]))
-  },[])
+  useEffect(() => {
+    const unsubscribe = onAuthStateChanged(auth, (currentUser) => {
+      if (!currentUser) {
+        router.push('/auth/login')
+      } else {
+        setUser(currentUser)
+      }
+    })
+    return () => unsubscribe()
+  }, [router])
 
   const handleUpload = async (e: React.FormEvent) => {
     e.preventDefault()
+    if (role === 'admin') {
+      toast.warning('Admin accounts cannot upload documents')
+      return
+    }
+    if (loading) return
     setMsg(null)
-    if (!file || !title) { 
-      setMsgType('error')
-      setMsg('សូមបំពេញចងក្រងស្នើសុំ ហើយលើកឯកសារឡើង។')
+    if (!file || !title || !user) { 
+      toast.error('Please fill all required fields and select a file')
       return 
     }
     setLoading(true)
 
-    const { data: { user }, error: uerr } = await supabase.auth.getUser()
-    if (uerr || !user) { 
-      setMsgType('error')
-      setMsg('សូមចូលប្រើគណនីដំបូង។')
+    try {
+      const formData = new FormData()
+      formData.append('file', file)
+      formData.append('title', title)
+      formData.append('description', description)
+      formData.append('userId', user.uid)
+      formData.append('userEmail', user.email || user.uid)
+
+      const uploadResponse = await fetch(
+        process.env.NEXT_PUBLIC_UPLOAD_ENDPOINT || '/api/upload',
+        { method: 'POST', body: formData }
+      )
+      const uploadData = await uploadResponse.json()
+      if (!uploadData.publicUrl) throw new Error('File upload failed')
+
+      toast.success('Document uploaded successfully! Pending admin approval.')
       setLoading(false)
-      return 
-    }
-
-    const ext = file.name.split('.').pop()
-    const key = `documents/${user.id}/${uuid()}.${ext}`
-
-    const { error: upErr } = await supabase.storage.from('documents').upload(key, file, { contentType: file.type, upsert: false })
-    if (upErr) { 
-      setMsgType('error')
-      setMsg(upErr.message)
+      setSuccessInfo({ title, url: uploadData.publicUrl })
+      setSuccessOpen(true)
+      setTitle(''); setDescription(''); setFile(null)
+    } catch (error: any) { 
+      toast.error(error.message || 'Upload failed. Please try again.')
       setLoading(false)
-      return 
     }
-
-    const { error: insErr } = await supabase.from('documents').insert({
-      user_id: user.id,
-      title,
-      description,
-      category_id: categoryId,
-      file_path: key,
-      file_type: file.type,
-      status: 'pending',
-      subject,
-      level,
-      is_public: isPublic,
-      tags
-    })
-    if (insErr) { 
-      setMsgType('error')
-      setMsg(insErr.message)
-      setLoading(false)
-      return 
-    }
-
-    setMsgType('success')
-    setMsg('☑ ឯកសារបានលើកឡើងដោយជោគជ័យ។ វានឹងលេចឡើងបន្ទាប់ពីការត្រួតពិនិត្យរបស់ក្រុមគ្រប់គ្រង។')
-    setLoading(false)
-    setTitle(''); setDescription(''); setFile(null); setCategoryId(null); setTags(''); setSubject(''); setLevel('intermediate')
   }
 
   return (
@@ -98,6 +88,11 @@ export default function UploadPage() {
               <p className='text-slate-600 dark:text-slate-400 text-sm'>ចែករំលែកលទ្ធផលអប់រំរបស់អ្នក</p>
             </div>
           </div>
+          {role === 'admin' && (
+            <div className='mt-3 p-4 rounded-xl border border-amber-300 dark:border-amber-700 bg-amber-50 dark:bg-amber-900/20 text-amber-800 dark:text-amber-200 text-sm font-semibold'>
+              Admin accounts can view and approve documents but cannot upload new ones.
+            </div>
+          )}
         </div>
 
         <form onSubmit={handleUpload} className='space-y-6'>
@@ -149,70 +144,6 @@ export default function UploadPage() {
             </div>
           </div>
 
-          {/* Category & Classification Section */}
-          <div className='bg-white dark:bg-slate-800 rounded-xl p-6 border border-slate-200 dark:border-slate-700'>
-            <h2 className='text-lg font-semibold text-slate-900 dark:text-white mb-4 flex items-center gap-2'>
-              <Layers className='w-5 h-5 text-purple-600' />
-              ការចាត់ថ្នាក់ប្រកាស
-            </h2>
-            <div className='grid grid-cols-1 md:grid-cols-2 gap-4'>
-              <div>
-                <label className='block text-sm font-medium text-slate-700 dark:text-slate-300 mb-2'>
-                  ប្រភេទ *
-                </label>
-                <select 
-                  value={categoryId || ''}
-                  onChange={(e)=> setCategoryId(e.target.value ? Number(e.target.value) : null)}
-                  className='w-full px-4 py-2.5 rounded-lg border border-slate-300 dark:border-slate-600 dark:bg-slate-700 dark:text-white focus:ring-2 focus:ring-blue-500 focus:border-transparent outline-none transition'
-                >
-                  <option value=''>-- ជ្រើសរើស --</option>
-                  {cats.map(c => <option key={c.id} value={c.id}>{c.name}</option>)}
-                </select>
-              </div>
-
-              <div>
-                <label className='block text-sm font-medium text-slate-700 dark:text-slate-300 mb-2'>
-                  កម្រិតលំបាក
-                </label>
-                <select 
-                  value={level}
-                  onChange={(e)=> setLevel(e.target.value)}
-                  className='w-full px-4 py-2.5 rounded-lg border border-slate-300 dark:border-slate-600 dark:bg-slate-700 dark:text-white focus:ring-2 focus:ring-blue-500 focus:border-transparent outline-none transition'
-                >
-                  <option value='beginner'>ចាប់ផ្តើម</option>
-                  <option value='intermediate'>មធ្យម</option>
-                  <option value='advanced'>មិនបាន​សរសេរ</option>
-                </select>
-              </div>
-
-              <div>
-                <label className='block text-sm font-medium text-slate-700 dark:text-slate-300 mb-2'>
-                  ប្រធានបទ
-                </label>
-                <input 
-                  type='text' 
-                  value={subject}
-                  onChange={(e)=> setSubject(e.target.value)}
-                  placeholder='ឧ. គណិតវិទ្យា, វិទ្យាសាស្ត្រ, ប្រវត្តិសាស្ត្រ'
-                  className='w-full px-4 py-2.5 rounded-lg border border-slate-300 dark:border-slate-600 dark:bg-slate-700 dark:text-white focus:ring-2 focus:ring-blue-500 focus:border-transparent outline-none transition'
-                />
-              </div>
-
-              <div>
-                <label className='block text-sm font-medium text-slate-700 dark:text-slate-300 mb-2'>
-                  ស្លាក/ពាក្យគន្លឹះ
-                </label>
-                <input 
-                  type='text' 
-                  value={tags}
-                  onChange={(e)=> setTags(e.target.value)}
-                  placeholder='អក្សរបំបែកដោយលេខក្បៀស...'
-                  className='w-full px-4 py-2.5 rounded-lg border border-slate-300 dark:border-slate-600 dark:bg-slate-700 dark:text-white focus:ring-2 focus:ring-blue-500 focus:border-transparent outline-none transition'
-                />
-              </div>
-            </div>
-          </div>
-
           {/* File Upload Section */}
           <div className='bg-white dark:bg-slate-800 rounded-xl p-6 border border-slate-200 dark:border-slate-700'>
             <h2 className='text-lg font-semibold text-slate-900 dark:text-white mb-4 flex items-center gap-2'>
@@ -236,48 +167,77 @@ export default function UploadPage() {
             />
           </div>
 
-          {/* Privacy Section */}
-          <div className='bg-white dark:bg-slate-800 rounded-xl p-6 border border-slate-200 dark:border-slate-700'>
-            <h2 className='text-lg font-semibold text-slate-900 dark:text-white mb-4 flex items-center gap-2'>
-              <Lock className='w-5 h-5 text-orange-600' />
-              ឯកជនភាព
-            </h2>
-            <label className='flex items-center gap-3 cursor-pointer'>
-              <input 
-                type='checkbox'
-                checked={isPublic}
-                onChange={(e)=> setIsPublic(e.target.checked)}
-                className='w-5 h-5 rounded border-slate-300 dark:border-slate-600 text-blue-600 cursor-pointer'
-              />
-              <span className='text-slate-700 dark:text-slate-300'>
-                ធ្វើឱ្យលម្អិត - អ្នកប្រើប្រាស់ដទៃទៀតក្នុងបណ្តាញអាចឃើញនិងលេងលើឯកសារនេះ
-              </span>
-            </label>
-          </div>
-
           {/* Submit Button */}
           <div className='flex gap-3 pt-2'>
             <button 
               type='submit'
-              disabled={loading}
+              disabled={loading || role === 'admin'}
               className={`flex-1 py-3 px-4 rounded-lg font-semibold flex items-center justify-center gap-2 transition ${
-                loading 
+                loading || role === 'admin'
                   ? 'bg-slate-400 dark:bg-slate-600 text-white cursor-not-allowed' 
                   : 'bg-blue-600 hover:bg-blue-700 dark:bg-blue-700 dark:hover:bg-blue-600 text-white'
               }`}>
-              {loading ? '⏳ កំពុងលើក...' : '✓ លើកឯកសារ'}
+              {loading ? '⏳ កំពុងលើក...' : role === 'admin' ? 'Admin cannot upload' : '✓ លើកឯកសារ'}
             </button>
             <button 
               type='button'
               onClick={() => {
-                setTitle(''); setDescription(''); setFile(null); setCategoryId(null); 
-                setTags(''); setSubject(''); setLevel('intermediate'); setMsg(null)
+                setTitle(''); setDescription(''); setFile(null); setMsg(null)
               }}
               className='py-3 px-6 rounded-lg font-semibold text-slate-700 dark:text-slate-300 border border-slate-300 dark:border-slate-600 hover:bg-slate-100 dark:hover:bg-slate-700 transition'>
               សម្អាត
             </button>
           </div>
         </form>
+        {successOpen && (
+          <div className='fixed inset-0 bg-black/50 backdrop-blur-sm z-50 flex items-center justify-center px-4'>
+            <div className='bg-white dark:bg-slate-900 rounded-2xl shadow-2xl max-w-md w-full p-6 border border-slate-200 dark:border-slate-700'>
+              <div className='flex items-center justify-between mb-4'>
+                <div className='flex items-center gap-3'>
+                  <div className='w-10 h-10 rounded-full bg-green-100 dark:bg-green-900/30 flex items-center justify-center text-green-700 dark:text-green-300'>
+                    ✓
+                  </div>
+                  <div>
+                    <h3 className='text-xl font-bold text-slate-900 dark:text-white'>Upload successful</h3>
+                    <p className='text-sm text-slate-600 dark:text-slate-400'>Awaiting admin approval</p>
+                  </div>
+                </div>
+                <button
+                  onClick={() => setSuccessOpen(false)}
+                  className='text-slate-500 hover:text-slate-700 dark:text-slate-400 dark:hover:text-white'
+                >
+                  ✕
+                </button>
+              </div>
+              <div className='space-y-2 mb-4'>
+                <p className='text-slate-800 dark:text-slate-200 font-semibold'>{successInfo.title}</p>
+                <a
+                  href={successInfo.url}
+                  target='_blank'
+                  rel='noopener noreferrer'
+                  className='text-sm text-blue-600 dark:text-blue-400 underline break-all'
+                >
+                  View file link
+                </a>
+              </div>
+              <div className='flex flex-col gap-2'>
+                <button
+                  onClick={() => setSuccessOpen(false)}
+                  className='w-full py-3 rounded-lg bg-green-600 hover:bg-green-700 text-white font-semibold transition'
+                >
+                  Done
+                </button>
+                <Link
+                  href='/explore'
+                  className='w-full text-center py-3 rounded-lg border border-slate-300 dark:border-slate-700 text-slate-700 dark:text-slate-200 hover:bg-slate-100 dark:hover:bg-slate-800 transition font-semibold'
+                  onClick={() => setSuccessOpen(false)}
+                >
+                  Go to Explore
+                </Link>
+              </div>
+            </div>
+          </div>
+        )}
       </div>
     </div>
   )

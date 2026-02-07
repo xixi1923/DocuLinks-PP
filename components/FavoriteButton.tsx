@@ -1,30 +1,42 @@
 
 'use client'
 import { useEffect, useState } from 'react'
-import { supabase } from '@/lib/supabaseClient'
+import { auth, onAuthStateChanged } from '@/lib/firebaseClient'
+import { addFavorite, removeFavorite, checkIfFavorited } from '@/lib/firestoreHelpers'
+
 export default function FavoriteButton({ documentId }: { documentId: string }) {
   const [fav, setFav] = useState(false)
+
   useEffect(() => {
-    supabase.auth.getUser().then(async ({ data }) => {
-      const uid = data.user?.id
-      if (!uid) return
-      const { data: row } = await supabase.from('favorites')
-        .select('user_id').eq('document_id', documentId).eq('user_id', uid).maybeSingle()
-      setFav(!!row)
+    const unsub = onAuthStateChanged(auth, async (user) => {
+      if (user) {
+        const isFav = await checkIfFavorited(user.uid, documentId)
+        setFav(isFav)
+      } else {
+        setFav(false)
+      }
     })
+    return () => unsub()
   }, [documentId])
+
   const toggle = async () => {
-    const { data: { user } } = await supabase.auth.getUser()
-    if (!user) return alert('Please log in')
+    const user = auth.currentUser
+    if (!user) {
+      alert('Please log in')
+      return
+    }
     if (fav) {
-      await supabase.from('favorites').delete().eq('document_id', documentId).eq('user_id', user.id)
+      await removeFavorite(user.uid, documentId)
       setFav(false)
     } else {
-      await supabase.from('favorites').insert({ document_id: documentId, user_id: user.id })
+      await addFavorite(user.uid, documentId)
       setFav(true)
     }
   }
+
   return (
-    <button onClick={toggle} className={`btn btn-outline ${fav ? 'bg-amber-500 text-white border-amber-500' : ''}`}>⭐ {fav ? 'Saved' : 'Save'}</button>
+    <button onClick={toggle} className={`btn btn-outline ${fav ? 'bg-amber-500 text-white border-amber-500' : ''}`}>
+      ⭐ {fav ? 'Saved' : 'Save'}
+    </button>
   )
 }
