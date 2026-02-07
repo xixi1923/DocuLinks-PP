@@ -1,5 +1,6 @@
 'use client'
 import { useState } from 'react'
+import Link from 'next/link'
 import { ChevronRight, MessageCircle } from 'lucide-react'
 
 interface FAQItem {
@@ -80,10 +81,13 @@ export default function FAQSection({ theme, faqData }: FAQSectionProps) {
           <p className="text-purple-200 mb-6 text-lg">
             មិនឃើញសំណួរដែលលោកអ្នកកំពុងស្វែងរក?
           </p>
-          <button className="inline-flex items-center gap-3 bg-gradient-to-r from-purple-500 to-pink-500 text-white px-10 py-4 rounded-full font-bold hover:from-purple-600 hover:to-pink-600 transition-all duration-300 shadow-2xl hover:shadow-purple-500/50 hover:scale-105">
+          <Link
+            href="/contact"
+            className="inline-flex items-center gap-3 bg-gradient-to-r from-purple-500 to-pink-500 text-white px-10 py-4 rounded-full font-bold hover:from-purple-600 hover:to-pink-600 transition-all duration-300 shadow-2xl hover:shadow-purple-500/50 hover:scale-105"
+          >
             <MessageCircle size={20} />
             <span>ទាក់ទងយើងឥឡូវនេះ</span>
-          </button>
+          </Link>
         </div>
       </div>
     </section>

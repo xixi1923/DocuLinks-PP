@@ -1,4 +1,5 @@
 'use client'
+import Link from 'next/link'
 import { ArrowRight, Search, LucideIcon } from 'lucide-react'
 
 interface Category {
@@ -49,21 +50,27 @@ export default function CategoriesSection({ theme, categories }: CategoriesSecti
                 <span className={`text-sm font-medium px-3 py-1 rounded-full ${theme === 'dark' ? 'text-cyan-300 bg-cyan-500/20' : 'text-indigo-600 bg-indigo-100'}`}>
                   {category.count}
                 </span>
-                <button className={`font-medium flex items-center gap-1 ${theme === 'dark' ? 'text-cyan-300 hover:text-cyan-200' : 'text-indigo-600 hover:text-indigo-700'}`}>
+                <Link
+                  href={`/documents?cat=${encodeURIComponent(category.category)}`}
+                  className={`font-medium flex items-center gap-1 ${theme === 'dark' ? 'text-cyan-300 hover:text-cyan-200' : 'text-indigo-600 hover:text-indigo-700'}`}
+                >
                   ស្វែងរក <ArrowRight size={16} />
-                </button>
+                </Link>
               </div>
             </div>
           ))}
         </div>
 
         <div className="text-center">
-          <button className={`px-8 py-4 rounded-lg font-bold transition-all duration-300 flex items-center gap-2 mx-auto ${
-            theme === 'dark' ? 'bg-cyan-500 text-white hover:bg-cyan-400' : 'bg-indigo-600 text-white hover:bg-indigo-700'
-          }`}>
+          <Link
+            href="/documents"
+            className={`px-8 py-4 rounded-lg font-bold transition-all duration-300 flex items-center gap-2 mx-auto ${
+              theme === 'dark' ? 'bg-cyan-500 text-white hover:bg-cyan-400' : 'bg-indigo-600 text-white hover:bg-indigo-700'
+            }`}
+          >
             <Search size={20} />
             មើលឯកសារទាំងអស់
-          </button>
+          </Link>
         </div>
       </div>
     </section>

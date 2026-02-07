@@ -43,7 +43,7 @@ export default function CTASection({ theme }: CTASectionProps) {
             </div>
 
             <Link 
-              href="/upload" 
+              href="/post" 
               className="inline-flex items-center gap-3 bg-white text-purple-600 px-10 py-5 rounded-full font-bold text-lg shadow-2xl transition-all duration-300 hover:scale-110 hover:shadow-3xl hover:bg-yellow-300"
             >
               <Upload size={24} />
@@ -92,9 +92,12 @@ export default function CTASection({ theme }: CTASectionProps) {
                       <p className="text-xs text-slate-500 text-center leading-relaxed max-w-xs">
                         ឯកសារសិក្សា ឯកសារគ្រូបង្រៀន និងឯកសារស្រាវជ្រាវដ៏វិស័យ
                       </p>
-                      <button className="mt-auto w-full bg-gradient-to-r from-blue-500 to-purple-500 text-white font-bold py-3 rounded-2xl hover:shadow-lg transition-all">
+                      <Link
+                        href="/documents"
+                        className="mt-auto w-full bg-gradient-to-r from-blue-500 to-purple-500 text-white font-bold py-3 rounded-2xl hover:shadow-lg transition-all text-center"
+                      >
                         មើលលម្អិត
-                      </button>
+                      </Link>
                     </div>
 
                     <div className="mt-6 flex gap-3">
